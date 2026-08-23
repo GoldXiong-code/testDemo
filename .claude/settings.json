@@ -41,7 +41,13 @@
       "Bash(ssh root@120.79.143.65 *)",
       "Bash(ssh root@120.79.143.65 'cd /var/www/atoms-demo && npm run build 2>&1 | tail -15')",
       "Bash(ssh root@120.79.143.65 'cd /var/www/atoms-demo && npm install --save-dev @types/bcrypt 2>&1 | tail -3')",
-      "Bash(git commit -m 'fix: 修复 TypeScript 构建错误 *)"
+      "Bash(git commit -m 'fix: 修复 TypeScript 构建错误 *)",
+      "Bash(ssh root@120.79.143.65 'cd /var/www/atoms-demo && git pull && npm install 2>&1 | tail -3')",
+      "Bash(ssh root@120.79.143.65 'cd /var/www/atoms-demo && npm run build 2>&1 | tail -20')",
+      "Bash(ssh root@120.79.143.65 'cd /var/www/atoms-demo && npm run build 2>&1 | grep -E \"\\(Error|error|prerender\\)\" | head -10')",
+      "Bash(git commit -m 'fix: 修复 /app 页面构建时的预渲染错误 *)",
+      "Bash(ssh root@120.79.143.65 'cd /var/www/atoms-demo && git pull && npm run build 2>&1 | tail -15')",
+      "Bash(ssh root@120.79.143.65 'rm -rf /var/www/atoms-demo/src/app/generate && rm -f /var/www/atoms-demo/src/app/generate/page.tsx && echo \"✓ removed generate page\"')"
     ]
   }
 }
