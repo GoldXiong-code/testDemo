@@ -9,10 +9,6 @@ import {
   ChevronDown,
   LogOut,
   User,
-  DollarSign,
-  Info,
-  Users,
-  BookOpen,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -20,7 +16,6 @@ export default function Navbar() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [resourceMenuOpen, setResourceMenuOpen] = useState(false);
 
   useEffect(() => {
     setCurrentUser(getCurrentUser());
@@ -33,21 +28,6 @@ export default function Navbar() {
     router.push("/");
   };
 
-  const navLinks = [
-    { href: "#", label: "定价", icon: DollarSign },
-    { href: "#", label: "关于", icon: Info },
-    { href: "#", label: "社区", icon: Users },
-    {
-      label: "资源",
-      icon: BookOpen,
-      dropdown: [
-        { href: "#", label: "文档" },
-        { href: "#", label: "教程" },
-        { href: "#", label: "博客" },
-      ],
-    },
-  ];
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 bg-[var(--nav-bg)] backdrop-blur-md border-b border-[var(--card-border)]/50">
       {/* 左侧：Logo + 导航 */}
@@ -57,50 +37,6 @@ export default function Navbar() {
           <Atom className="w-6 h-6 text-indigo-400" />
           <span>Atoms</span>
         </Link>
-
-        {/* 导航链接 */}
-        <div className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) =>
-            link.dropdown ? (
-              <div key={link.label} className="relative">
-                <button
-                  onClick={() => setResourceMenuOpen(!resourceMenuOpen)}
-                  className="flex items-center gap-1 px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
-                >
-                  {link.label}
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-                {resourceMenuOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-40"
-                      onClick={() => setResourceMenuOpen(false)}
-                    />
-                    <div className="absolute top-full left-0 mt-1 w-40 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl shadow-2xl overflow-hidden z-50">
-                      {link.dropdown.map((item) => (
-                        <a
-                          key={item.label}
-                          href={item.href}
-                          className="block px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
-                        >
-                          {item.label}
-                        </a>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <a
-                key={link.label}
-                href={link.href}
-                className="px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
-              >
-                {link.label}
-              </a>
-            )
-          )}
-        </div>
       </div>
 
       {/* 右侧：登录/注册 或 用户菜单 */}
