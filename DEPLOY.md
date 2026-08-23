@@ -15,11 +15,11 @@
 | 项目 | 推荐选择 |
 |------|---------|
 | **地域** | 离你最近的（如华东-上海、华北-北京、华南-深圳） |
-| **镜像** | 应用镜像 → **Node.js** （预装 Node.js 环境） |
-| **套餐** | 2核2G / 60GB SSD / 3Mbps（最便宜即可） |
+| **镜像** | 系统镜像 → **Alibaba Cloud Linux** |
+| **套餐** | 2核2G（最便宜即可） |
 | **时长** | 包年更划算，新用户经常有 1 折优惠 |
 
-> 💡 新用户可前往 [阿里云优惠活动页](https://www.aliyun.com/activity) 查看折扣，轻量服务器经常有 ¥54/年的优惠。
+> 💡 新用户可前往 [阿里云优惠活动页](https://www.aliyun.com/activity) 查看折扣，轻量服务器经常有 ¥68/年的优惠。
 
 ### 3. 设置密码
 
@@ -67,19 +67,12 @@ ssh root@你的服务器IP
 
 连接服务器后，依次执行以下命令：
 
-### 1. 确认 Node.js
+### 1. 安装 Node.js 20
 
-如果选择了 Node.js 应用镜像，Node.js 应该已安装：
-
-```bash
-node -v
-npm -v
-```
-
-如果版本低于 18，需要升级：
+Alibaba Cloud Linux 是干净系统，需要手动安装 Node.js：
 
 ```bash
-# 安装 nvm
+# 安装 nvm（Node 版本管理器）
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 source ~/.bashrc
 
@@ -87,15 +80,15 @@ source ~/.bashrc
 nvm install 20
 nvm use 20
 nvm alias default 20
+
+# 验证安装
+node -v
+npm -v
 ```
 
 ### 2. 安装 Git
 
 ```bash
-# Ubuntu/Debian 系统
-apt update && apt install -y git
-
-# CentOS/Alibaba Cloud Linux 系统
 yum install -y git
 ```
 
@@ -108,10 +101,6 @@ npm install -g pm2
 ### 4. 安装 Nginx（反向代理）
 
 ```bash
-# Ubuntu/Debian
-apt install -y nginx
-
-# CentOS/Alibaba Cloud Linux
 yum install -y nginx
 ```
 
