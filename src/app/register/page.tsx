@@ -42,7 +42,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const [nameStatus, setNameStatus] = useState<"" | "checking" | "available" | "taken">("");
-  const nameCheckTimer = useRef<ReturnType<typeof setTimeout>>();
+  const nameCheckTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // 实时检查用户名可用性
   const checkUsername = (name: string) => {
