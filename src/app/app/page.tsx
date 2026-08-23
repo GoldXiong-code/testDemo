@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, Sparkles, Copy, Check, RotateCcw, Brain, Image, FileText, Download } from "lucide-react";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/store";
 
-export default function AppPage() {
+function AppContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [user, setUser] = useState<{ name: string } | null>(null);
@@ -290,5 +290,18 @@ export default function AppPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function AppPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen pt-20 pb-10 px-4 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
+        <span className="ml-3 text-[var(--text-muted)]">加载中...</span>
+      </div>
+    }>
+      <AppContent />
+    </Suspense>
   );
 }
