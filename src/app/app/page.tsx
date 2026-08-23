@@ -12,7 +12,7 @@ export default function AppPage() {
   const [user, setUser] = useState<{ name: string } | null>(null);
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState("");
-  const [contentType, setContentType] = useState<"text" | "svg">("text");
+  const [contentType, setContentType] = useState<"text" | "image">("text");
   const [intent, setIntent] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -50,15 +50,6 @@ export default function AppPage() {
       resultRef.current.scrollTop = resultRef.current.scrollHeight;
     }
   }, [result]);
-
-  // SVG 安全清理：去除 markdown 代码块包裹 + 危险标签
-  const sanitizeSVG = (svg: string) => {
-    // 去除 ```svg ... ``` 包裹
-    let cleaned = svg.replace(/^```svg\s*/i, "").replace(/\s*```$/i, "").trim();
-    // 去除 script 标签和事件处理器
-    cleaned = cleaned.replace(/<script[\s\S]*?<\/script>/gi, "").replace(/on\w+\s*=/gi, "");
-    return cleaned;
-  };
 
   const handleGenerate = async (overridePrompt?: string) => {
     const text = (typeof overridePrompt === "string" ? overridePrompt : null) || prompt;
@@ -111,9 +102,9 @@ export default function AppPage() {
                   setHasStarted(true);
                   setContentType(data.contentType || "text");
                 }
-                if (data.contentType === "svg") {
-                  // SVG 一次性设置，用 dangerouslySetInnerHTML 渲染
-                  setResult(sanitizeSVG(data.content));
+                if (data.contentType === "image") {
+                  // 图片 URL 直接设置
+                  setResult(data.content);
                 } else {
                   fullContent += data.content;
                   setResult(fullContent);
@@ -133,24 +124,46 @@ export default function AppPage() {
     setLoading(false);
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(result);
+  const handleCopy = async () => {
+    if (contentType === "image") {
+      // 复制图片到剪贴板
+      try {
+        const response = await fetch(result);
+        const blob = await response.blob();
+        await navigator.clipboard.write([
+          new ClipboardItem({ [blob.type]: blob }),
+        ]);
+      } catch {
+        // 如果无法复制图片，复制 URL
+        navigator.clipboard.writeText(result);
+      }
+    } else {
+      navigator.clipboard.writeText(result);
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!result) return;
-    // 下载 SVG 文件
-    const blob = new Blob([result], { type: "image/svg+xml" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `alex-design-${Date.now()}.svg`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    if (contentType === "image") {
+      // 下载图片
+      try {
+        const response = await fetch(result);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `alex-design-${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch {
+        // 直接打开图片
+        window.open(result, "_blank");
+      }
+    }
   };
 
   const handleRegenerate = () => {
@@ -228,7 +241,7 @@ export default function AppPage() {
               </div>
               {result && !loading && (
                 <div className="flex gap-2">
-                  {contentType === "svg" && (
+                  {contentType === "image" && (
                     <button onClick={handleDownload} className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-[var(--text-muted)] hover:text-white border border-[var(--card-border)] rounded-lg hover:bg-white/10 transition-colors">
                       <Download className="w-3.5 h-3.5" />下载图片
                     </button>
@@ -258,11 +271,12 @@ export default function AppPage() {
                   <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
                   <span className="ml-3 text-[var(--text-muted)]">正在连接 AI...</span>
                 </div>
-              ) : contentType === "svg" ? (
+              ) : contentType === "image" ? (
                 <div className="flex justify-center">
-                  <div
-                    dangerouslySetInnerHTML={{ __html: result }}
-                    className="w-full max-w-2xl [&>svg]:w-full [&>svg]:h-auto [&>svg]:rounded-xl"
+                  <img
+                    src={result}
+                    alt="AI 生成的图片"
+                    className="max-w-full max-h-[560px] rounded-xl shadow-2xl"
                   />
                 </div>
               ) : (

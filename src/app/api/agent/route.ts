@@ -4,7 +4,7 @@ const API_KEY = "sk-7ab4485a943f4159ac1fc101e903c218";
 const BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1";
 const MODEL = "qwen3.7-flash-2026-07-15";
 
-async function callLLM(messages: { role: string; content: string }[]) {
+async function callLLM(messages: { role: string; content: string }[], options?: { max_tokens?: number; temperature?: number }) {
   const res = await fetch(`${BASE_URL}/chat/completions`, {
     method: "POST",
     headers: {
@@ -14,8 +14,8 @@ async function callLLM(messages: { role: string; content: string }[]) {
     body: JSON.stringify({
       model: MODEL,
       messages,
-      max_tokens: 1024,
-      temperature: 0.3,
+      max_tokens: options?.max_tokens ?? 1024,
+      temperature: options?.temperature ?? 0.3,
     }),
   });
   const data = await res.json();
@@ -72,29 +72,88 @@ export async function POST(request: Request) {
 
         // ===== Agent 2 或 Agent 3 =====
         if (intent === "image") {
-          send({ type: "thinking", stage: 1, text: "Alex 正在绘制图像..." });
+          send({ type: "thinking", stage: 1, text: "🎨 正在提交绘图任务..." });
 
-          const svgRes = await callLLM([
+          // 1. 提交图片生成任务（DashScope 通义万相）
+          const submitRes = await fetch(
+            "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
             {
-              role: "system",
-              content: `你是一个 SVG 绘图专家。根据用户描述，生成一个精美的 SVG 图像。
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${API_KEY}`,
+                "X-DashScope-Async": "enable",
+              },
+              body: JSON.stringify({
+                model: "wanx2.1-t2i-turbo",
+                input: { prompt },
+                parameters: { size: "1024*1024", n: 1 },
+              }),
+            }
+          );
 
-要求：
-1. 只返回 SVG 代码，用 \`\`\`svg 包裹
-2. 使用现代简洁的设计风格
-3. 尺寸 600x400
-4. 使用渐变和圆角
-5. 配色和谐美观
-6. 不要包含任何脚本或外部引用`,
-            },
-            { role: "user", content: prompt },
-          ]);
+          const submitData = await submitRes.json();
+          const taskId = submitData.output?.task_id;
 
-          // 提取 SVG 代码
-          const svgMatch = svgRes.match(/```svg\s*([\s\S]*?)```/);
-          const svgCode = svgMatch ? svgMatch[1].trim() : svgRes.trim();
+          if (!taskId) {
+            send({ type: "error", message: "图片生成服务异常，请稍后重试" });
+            send({ type: "done" });
+            controller.close();
+            return;
+          }
 
-          send({ type: "content", content: svgCode, contentType: "svg" });
+          // 2. 轮询等待结果（最多 60 秒）
+          const maxWait = 60000;
+          const pollInterval = 2000;
+          let elapsed = 0;
+          let imageUrl = "";
+          let taskSuccess = false;
+
+          const thinkingTexts = [
+            "🎨 AI 画师正在创作...",
+            "🖌️ 勾勒轮廓中...",
+            "🎨 填充色彩中...",
+            "✨ 添加细节中...",
+            "🖼️ 即将完成...",
+          ];
+
+          while (elapsed < maxWait) {
+            await new Promise((r) => setTimeout(r, pollInterval));
+            elapsed += pollInterval;
+
+            const progressIdx = Math.min(
+              Math.floor(elapsed / pollInterval) - 1,
+              thinkingTexts.length - 1
+            );
+            send({ type: "thinking", stage: 1, text: thinkingTexts[progressIdx] });
+
+            const taskRes = await fetch(
+              `https://dashscope.aliyuncs.com/api/v1/tasks/${taskId}`,
+              { headers: { Authorization: `Bearer ${API_KEY}` } }
+            );
+            const taskData = await taskRes.json();
+            const status = taskData.output?.task_status;
+
+            if (status === "SUCCEEDED") {
+              imageUrl = taskData.output?.results?.[0]?.url || "";
+              taskSuccess = true;
+              break;
+            } else if (status === "FAILED") {
+              send({ type: "error", message: "图片生成失败，请重试" });
+              send({ type: "done" });
+              controller.close();
+              return;
+            }
+          }
+
+          if (!taskSuccess || !imageUrl) {
+            send({ type: "error", message: "图片生成超时，请重试" });
+            send({ type: "done" });
+            controller.close();
+            return;
+          }
+
+          send({ type: "content", content: imageUrl, contentType: "image" });
         } else if (intent === "plan") {
           send({ type: "thinking", stage: 1, text: "Alex 正在生成文字方案..." });
 
