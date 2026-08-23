@@ -1,0 +1,170 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { getCurrentUser, logoutUser } from "@/lib/store";
+import { useState, useEffect } from "react";
+import {
+  Atom,
+  ChevronDown,
+  LogOut,
+  User,
+  DollarSign,
+  Info,
+  Users,
+  BookOpen,
+} from "lucide-react";
+
+export default function Navbar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [resourceMenuOpen, setResourceMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setCurrentUser(getCurrentUser());
+  }, [pathname]);
+
+  const handleLogout = () => {
+    logoutUser();
+    setCurrentUser(null);
+    setUserMenuOpen(false);
+    router.push("/");
+  };
+
+  const navLinks = [
+    { href: "#", label: "定价", icon: DollarSign },
+    { href: "#", label: "关于", icon: Info },
+    { href: "#", label: "社区", icon: Users },
+    {
+      label: "资源",
+      icon: BookOpen,
+      dropdown: [
+        { href: "#", label: "文档" },
+        { href: "#", label: "教程" },
+        { href: "#", label: "博客" },
+      ],
+    },
+  ];
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 bg-[var(--nav-bg)] backdrop-blur-md border-b border-[var(--card-border)]/50">
+      {/* 左侧：Logo + 导航 */}
+      <div className="flex items-center gap-8">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 text-white font-bold text-xl">
+          <Atom className="w-6 h-6 text-indigo-400" />
+          <span>Atoms</span>
+        </Link>
+
+        {/* 导航链接 */}
+        <div className="hidden md:flex items-center gap-1">
+          {navLinks.map((link) =>
+            link.dropdown ? (
+              <div key={link.label} className="relative">
+                <button
+                  onClick={() => setResourceMenuOpen(!resourceMenuOpen)}
+                  className="flex items-center gap-1 px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  {link.label}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                {resourceMenuOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setResourceMenuOpen(false)}
+                    />
+                    <div className="absolute top-full left-0 mt-1 w-40 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl shadow-2xl overflow-hidden z-50">
+                      {link.dropdown.map((item) => (
+                        <a
+                          key={item.label}
+                          href={item.href}
+                          className="block px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                          {item.label}
+                        </a>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <a
+                key={link.label}
+                href={link.href}
+                className="px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+              >
+                {link.label}
+              </a>
+            )
+          )}
+        </div>
+      </div>
+
+      {/* 右侧：登录/注册 或 用户菜单 */}
+      <div className="flex items-center gap-3">
+        {!currentUser ? (
+          <>
+            <Link
+              href="/login"
+              className="px-5 py-2 text-sm text-gray-300 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+            >
+              登录
+            </Link>
+            <Link
+              href="/register"
+              className="px-5 py-2 text-sm text-white bg-indigo-600 hover:bg-indigo-500 rounded-full transition-colors font-medium"
+            >
+              注册
+            </Link>
+          </>
+        ) : (
+          <div className="relative">
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="flex items-center gap-2 px-4 py-2 text-sm bg-[var(--card-bg)] border border-[var(--card-border)] rounded-full hover:bg-white/10 transition-colors"
+            >
+              <User className="w-4 h-4" />
+              <span>{currentUser.name}</span>
+              <ChevronDown className="w-3 h-3" />
+            </button>
+            {userMenuOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setUserMenuOpen(false)}
+                />
+                <div className="absolute top-full right-0 mt-1 w-48 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl shadow-2xl overflow-hidden z-50">
+                  <div className="px-4 py-3 border-b border-[var(--card-border)]">
+                    <p className="text-sm font-medium text-white">
+                      {currentUser.name}
+                    </p>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      {currentUser.email}
+                    </p>
+                  </div>
+                  <Link
+                    href="/app"
+                    className="block px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    AI 生成
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-white/10 transition-colors text-left"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    退出登录
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+}

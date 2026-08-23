@@ -1,0 +1,76 @@
+{
+  "users": [
+    {
+      "id": "02f4474e-ae16-47e1-a8e0-61f2735db9fe",
+      "name": "测试用户",
+      "email": "test@example.com",
+      "password": "$2b$10$qTXuDiG1nHDG1BszZlpVO.e5TtXP6OG6D0u.0AmrUx7cmnoyQN.Uq",
+      "createdAt": "2026-08-23T08:13:45.092Z",
+      "updatedAt": "2026-08-23T08:13:45.092Z"
+    },
+    {
+      "id": "3c10ca46-cf97-4867-8ebf-157a07f0f216",
+      "name": "junjie",
+      "email": "xiongjunjie@123.com",
+      "password": "$2b$10$c15TiNPwNP7ny4p2utJdeuf82QMUNKjJuISFFMruyS/iipD0lTwZm",
+      "createdAt": "2026-08-23T08:16:06.620Z",
+      "updatedAt": "2026-08-23T08:16:06.620Z"
+    },
+    {
+      "id": "0fb40dc3-7e44-46db-910d-df28c9e4a0fe",
+      "name": "junjie",
+      "email": "junjie@123.com",
+      "password": "$2b$10$IYYddmNYgjxFp2e4jjxNlu49bvncUpInUtyz6YFmlRzyu0HqZam7W",
+      "createdAt": "2026-08-23T08:26:55.116Z",
+      "updatedAt": "2026-08-23T08:26:55.116Z"
+    },
+    {
+      "id": "276ab4e8-90d1-44ea-ba2a-ba74da730cca",
+      "name": "新用户",
+      "email": "test3@example.com",
+      "password": "$2b$10$zk5E.H/SDjpgkUU5SXwy6.kSdzfrEJ8ANnGYElVgF3LqrLlnqWlLe",
+      "createdAt": "2026-08-23T08:34:33.558Z",
+      "updatedAt": "2026-08-23T08:34:33.558Z"
+    },
+    {
+      "id": "f0df6ba8-8a6a-44e8-8371-b7c488545e84",
+      "name": "xiong",
+      "email": "xiong@123.com",
+      "password": "$2b$10$FrpcH4HbshqJU2f2VH6I9uDj80A2IlUNrwyDmLyySuNeLAbb6O96G",
+      "createdAt": "2026-08-23T08:46:47.470Z",
+      "updatedAt": "2026-08-23T08:46:47.470Z"
+    },
+    {
+      "id": "baf80514-e326-4dc3-85f9-309014496d45",
+      "name": "we",
+      "email": "123@123.com",
+      "password": "$2b$10$g8T1adKFo/bMtuiPZ6I9Z.ZbBimmrhvwU0T/Gh8l4g7iH.BCPxWBq",
+      "createdAt": "2026-08-23T08:56:20.735Z",
+      "updatedAt": "2026-08-23T08:56:20.735Z"
+    },
+    {
+      "id": "88e43bd7-abe6-4270-9773-5524fdbb4d57",
+      "name": "34",
+      "email": "wer@1234.com",
+      "password": "$2b$10$Lxswqg0O180i.Cyy8BIb2e3dqX7x.68cpLdVqnpM8S5syVywD5z8i",
+      "createdAt": "2026-08-23T08:57:45.971Z",
+      "updatedAt": "2026-08-23T08:57:45.971Z"
+    },
+    {
+      "id": "3deb18af-4f44-4bc5-979c-ded32fd55fe2",
+      "name": "1234",
+      "email": "123@234.com",
+      "password": "$2b$10$q01KBE0.SpW5EI8vIwX9V.ZnDt2Sq/44XN1d13fbyrQierTHfw16q",
+      "createdAt": "2026-08-23T09:04:52.341Z",
+      "updatedAt": "2026-08-23T09:04:52.341Z"
+    },
+    {
+      "id": "3c02c0c1-f27e-4f34-b02e-4da3e129f53b",
+      "name": "12345",
+      "email": "123@1234.com",
+      "password": "$2b$10$H4DdpTXN66Fy3a90D8Q34.N24Hyh8S20i2FParDHmkXnK42/QaT0K",
+      "createdAt": "2026-08-23T09:05:28.454Z",
+      "updatedAt": "2026-08-23T09:05:28.454Z"
+    }
+  ]
+}
