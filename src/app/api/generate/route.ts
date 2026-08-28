@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const DASHSCOPE_API_KEY = "sk-7ab4485a943f4159ac1fc101e903c218";
+// 密钥只从环境变量读取（.env 文件，已在 .gitignore 中），禁止硬编码
+const DASHSCOPE_API_KEY = process.env.DASHSCOPE_API_KEY || "";
 const DASHSCOPE_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1";
 
 // 思考过程阶段提示

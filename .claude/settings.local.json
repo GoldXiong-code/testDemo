@@ -1,7 +1,33 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(npm run *)",
+      "Bash(echo \"---exit $?---\")",
+      "Bash(node /tmp/e2e-auth.js)",
+      "Bash(node -e ' *)",
+      "Bash(node /tmp/e2e-auth2.js)",
+      "Bash(curl *dashscope.aliyuncs.com*)",
+      "Bash(node /tmp/diag-auth.js)",
+      "Bash(node /tmp/e2e-style.js)",
+      "Bash(node /tmp/smoke-auth.js)",
+      "Bash(awk '/handleRegister\\\\\\(e/,/^    },/' /tmp/diag-code.html)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(curl -s -X POST http://localhost:3000/api/agent -H \"Content-Type: application/json\" -d '{\"prompt\":\"做一个网站\"}')",
+      "Bash(curl -s -o /dev/null -w \"工作台 %{http_code}\\\\n\" http://localhost:3000/app)",
+      "Bash(grep -n '用户需求：\\\\${userMessage}' /Users/xiongjunjie/atoms-demo/src/app/api/agent/route.ts)",
+      "Bash(node /tmp/e2e-dashA.js)",
+      "Bash(node /tmp/e2e-dashB.js)",
+      "Bash(node /tmp/smoke-dash.js /tmp/dashA-code.html)",
+      "Bash(node /tmp/smoke-dash.js /tmp/dashB-code.html)",
+      "Bash(node /tmp/unit-render.js)",
+      "Bash(node /tmp/smoke-dash.js /tmp/dashX-preview.html)",
+      "Bash(npx esbuild *)",
+      "Bash(node /tmp/capture-preview.js)",
+      "Bash(node /tmp/dump-dom.js /tmp/dashX-preview.html /tmp/dashX-dom2.html)",
+      "Read(//Applications/Google Chrome.app/Contents/MacOS/**)",
+      "Read(//Applications/Microsoft Edge.app/Contents/MacOS/**)",
+      "Bash(\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --headless --disable-gpu --no-sandbox --window-size=1440,900 --screenshot=/tmp/dash-shot.png \"file:///tmp/dashX-preview.html\")"
     ]
   }
 }

@@ -55,10 +55,16 @@ export async function POST(request: Request) {
       },
     });
 
+    // 只返回必要字段，绝不把密码哈希带给前端
     return NextResponse.json({
       success: true,
       message: "注册成功",
-      user,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+      },
     });
   } catch (error) {
     console.error("注册错误:", error);

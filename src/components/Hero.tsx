@@ -15,7 +15,7 @@ function Avatar({ color, delay }: { color: string; delay: number }) {
         animation: `bounce 1s ease ${delay}s infinite alternate`,
       }}
     >
-      {["🧑‍💻", "👩‍🎨", "‍🔬", "‍🚀", "", "🦊", "", "🐻"][delay % 8]}
+      {["🧑‍", "👩‍🎨", "👨‍🔬", "🚀", "🍎", "", "👩‍", "🐻"][delay % 8]}
     </div>
   );
 }
@@ -45,10 +45,18 @@ export default function Hero() {
       router.push("/login");
       return;
     }
+    // 统一跳转到 /app，由 /app 做意图识别和回答
     if (inputValue.trim()) {
-      router.push(`/app?prompt=${encodeURIComponent(inputValue)}`);
+      router.push(`/app?prompt=${encodeURIComponent(inputValue.trim())}&fresh=1`);
     } else {
-      router.push("/app");
+      router.push("/app?fresh=1");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleStart();
     }
   };
 
@@ -84,7 +92,8 @@ export default function Hero() {
         <textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="构建一个..."
+          onKeyDown={handleKeyDown}
+          placeholder="请 Alex 构建一个 Web 应用..."
           rows={3}
           className="w-full px-6 py-5 bg-transparent text-white placeholder:text-[var(--text-muted)] text-base resize-none focus:outline-none"
         />

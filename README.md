@@ -1,332 +1,211 @@
 # Atoms-Demo
 
-> 🚀 把想法变成可销售的产品 — AI 驱动的产品构建平台
+AI 驱动的产品构建平台，帮助用户将创意转化为可销售的产品方案。
 
-Atoms-Demo 是一个面向非技术用户的 AI 驱动平台，帮助用户在几分钟内将创意转化为可销售的产品方案。无需编码经验，通过自然语言对话即可完成产品规划、方案生成和图像设计。
+## 功能特性
 
----
+### 核心功能
 
-## ✨ 核心功能
+- **智能意图识别**：自动识别用户需求（Web 应用开发 / 问答对话）
+- **AI 工程师 Alex**：全栈工程师角色，提供专业开发服务
+- **流式响应**：实时显示 AI 生成内容，无需等待
+- **增量开发**：支持对已生成的应用进行迭代修改
+- **多类型支持**：电商、游戏、社交、教育、内容、工具等多种应用类型
 
-### 🤖 智能 AI Agent 系统
+### 技术特点
 
-采用多 Agent 协作架构，自动识别用户意图并分发到不同的专业 AI：
+- **多 Agent 协作**：意图识别 → 分发到专业 Agent
+- **SSE 流式输出**：实时显示生成过程
+- **进度反馈**：长时间操作时显示详细进度
+- **停止控制**：可随时中断生成，支持继续/重新生成
+- **聊天式交互**：用户消息右对齐，类似即时通讯
 
-- **意图识别 Agent** — 自动分析用户输入，判断需求类型（绘图 / 方案 / 问答）
-- **图像生成 Agent** — 根据描述生成精美的 SVG 矢量图，支持下载
-- **方案生成 Agent** — 生成结构化的产品方案（市场分析、功能规划、定价策略等）
-- **问答 Agent** — 直接回答用户的各类问题
+## 技术栈
 
-### 🔐 用户认证系统
+- **前端框架**：Next.js 16 (App Router)
+- **语言**：TypeScript
+- **UI**：React 19 + Tailwind CSS 4
+- **数据库**：SQLite + Prisma 7
+- **AI 服务**：阿里云通义千问 (DashScope)
+  - 文本生成：qwen3.7-flash
+  - 图片生成：wanx2.1-t2i-turbo（通义万相）
+- **部署**：PM2 + Nginx（阿里云轻量服务器）
 
-- 邮箱注册 / 登录
-- 密码 bcrypt 加密存储
-- 用户名唯一性校验
-- Zod 表单数据校验
-- 基于 localStorage 的会话管理
-
-### 📊 实时流式响应
-
-- 基于 SSE (Server-Sent Events) 的流式输出
-- 实时显示 AI 思考过程
-- 打字机效果逐字呈现内容
-- 支持 Markdown 格式渲染（标题、列表、表格、代码块等）
-
-### 🎨 现代化 UI
-
-- 深色主题设计
-- 响应式布局（适配桌面和移动端）
-- 可爱的卡通头像装饰
-- 流畅的动画过渡效果
-
----
-
-## 🛠️ 技术栈
-
-| 分类 | 技术 | 版本 |
-|------|------|------|
-| **框架** | Next.js (App Router) | 16.3.2 |
-| **语言** | TypeScript | ^5 |
-| **UI** | React | 19.2.8 |
-| **样式** | Tailwind CSS | ^4 |
-| **数据库** | SQLite (via Prisma) | - |
-| **ORM** | Prisma | ^7.9.1 |
-| **图标** | Lucide React | ^1.33.0 |
-| **表单校验** | Zod | ^4.4.3 |
-| **密码加密** | bcrypt | ^6.0.0 |
-| **AI 服务** | 阿里云通义千问 (DashScope API) | qwen3.7-flash |
-
----
-
-## 📁 项目结构
+## 项目结构
 
 ```
 atoms-demo/
 ├── src/
-│   ├── app/                          # 页面路由 (Next.js App Router)
-│   │   ├── page.tsx                  # 🏠 首页（Hero + Navbar）
-│   │   ├── layout.tsx                # 全局布局
-│   │   ├── globals.css               # 全局样式 + CSS 变量
-│   │   ├── login/
-│   │   │   └── page.tsx              # 🔑 登录页
-│   │   ├── register/
-│   │   │   └── page.tsx              # 📝 注册页
+│   ├── app/
+│   │   ├── page.tsx              # 首页
+│   │   ├── layout.tsx            # 全局布局
 │   │   ├── app/
-│   │   │   └── page.tsx              # 🤖 AI 生成工作台
-│   │   ├── generate/
-│   │   │   └── page.tsx              # 📊 内容生成页
-│   │   └── api/                      # API 路由
-│   │       ├── auth/
-│   │       │   ├── register/route.ts # 注册接口
-│   │       │   ├── login/route.ts    # 登录接口
-│   │       │   └── check-username/
-│   │       │       └── route.ts      # 用户名检查接口
-│   │       ├── agent/route.ts        # AI Agent 接口（多 Agent 协作）
-│   │       └── generate/route.ts     # AI 生成接口（流式输出）
-│   ├── components/                   # 可复用组件
-│   │   ├── Navbar.tsx                # 顶部导航栏（含下拉菜单）
-│   │   └── Hero.tsx                  # 首页主视觉区域
-│   └── lib/                          # 工具库
-│       ├── db.ts                     # Prisma 数据库客户端
-│       ├── store.ts                  # 客户端状态管理 (localStorage)
-│       └── validators.ts            # Zod 表单校验规则
+│   │   │   └── page.tsx          # AI 工作台（主交互页面）
+│   │   ├── login/
+│   │   │   └── page.tsx          # 登录页
+│   │   ├── register/
+│   │   │   └── page.tsx          # 注册页
+│   │   └── api/
+│   │       ├── intent/
+│   │       │   └── route.ts      # 意图识别 API
+│   │       ├── agent/
+│   │       │   └── route.ts      # AI Agent API（多 Agent 协作）
+│   │       └── auth/             # 认证相关 API
+│   ├── components/
+│   │   ├── Navbar.tsx            # 导航栏
+│   │   └── Hero.tsx              # 首页主视觉
+│   └── lib/
+│       ├── db.ts                 # 数据库客户端
+│       ├── store.ts              # 客户端状态管理
+│       └── validators.ts         # 表单校验
 ├── prisma/
-│   └── schema.prisma                 # 数据库模型定义
-├── prisma.config.ts                  # Prisma 配置
-├── data/
-│   └── db.json                       # SQLite 数据文件
-└── package.json                      # 项目配置
+│   └── schema.prisma             # 数据库模型
+└── package.json
 ```
 
----
-
-## 🚀 快速开始
-
-### 环境要求
-
-- **Node.js** >= 18.0.0
-- **npm** >= 9.0.0
-
-### 安装步骤
-
-#### 1. 克隆项目
+## 开发
 
 ```bash
-git clone <仓库地址>
-cd atoms-demo
-```
-
-#### 2. 安装依赖
-
-```bash
+# 安装依赖
 npm install
-```
 
-#### 3. 初始化数据库
+# 初始化数据库
+npx prisma migrate dev
 
-```bash
-npx prisma generate
-npx prisma db push
-```
-
-#### 4. 配置环境变量
-
-在项目根目录创建 `.env` 文件：
-
-```env
-# 数据库连接（SQLite）
-DATABASE_URL="file:./data/db.json"
-
-# 阿里云 DashScope API 密钥（用于 AI 功能）
-DASHSCOPE_API_KEY="your-api-key-here"
-```
-
-> ⚠️ **注意**: 请前往 [阿里云百炼平台](https://dashscope.console.aliyun.com/) 获取 API 密钥。
-
-#### 5. 启动开发服务器
-
-```bash
+# 启动开发服务器
 npm run dev
 ```
 
-打开浏览器访问 [http://localhost:3000](http://localhost:3000) 🎉
-
----
-
-## 📖 使用指南
-
-### 注册账号
-
-1. 点击右上角「注册」按钮
-2. 填写用户名、邮箱和密码
-3. 点击「创建账号」完成注册
-
-### 使用 AI 生成
-
-1. 登录后，在首页输入框输入你的想法
-2. 点击「开始」进入 AI 工作台
-3. AI 会自动识别你的意图：
-   - 输入「画一个...」→ 生成 SVG 图像 🎨
-   - 输入「帮我做一个产品方案...」→ 生成产品方案 📝
-   - 输入普通问题 → 直接回答 💬
-4. 生成完成后可以：
-   - 📋 复制内容
-   - 🔄 重新生成
-   - 📥 下载图片（SVG 格式）
-
----
-
-## 🔌 API 接口说明
-
-### 认证接口
-
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `/api/auth/register` | POST | 用户注册 |
-| `/api/auth/login` | POST | 用户登录 |
-| `/api/auth/check-username` | POST | 检查用户名是否可用 |
-
-### AI 接口
-
-| 接口 | 方法 | 说明 |
-|------|------|------|
-| `/api/agent` | POST | AI Agent 多意图生成（SSE 流式） |
-| `/api/generate` | POST | AI 方案生成（SSE 流式） |
-
-### 请求/响应示例
-
-**注册接口** (`POST /api/auth/register`)
-
-```json
-// 请求
-{
-  "name": "张三",
-  "email": "zhangsan@example.com",
-  "password": "123456"
-}
-
-// 响应
-{
-  "success": true,
-  "message": "注册成功",
-  "user": { "id": "...", "name": "张三", "email": "..." }
-}
-```
-
-**AI Agent 接口** (`POST /api/agent`)
-
-```json
-// 请求
-{
-  "prompt": "帮我设计一个在线教育平台的产品方案"
-}
-
-// 响应 (SSE 流)
-data: {"type":"thinking","stage":0,"text":"Alex 正在分析你的意图..."}
-data: {"type":"intent","intent":"plan"}
-data: {"type":"content","content":"## 产品方案...","contentType":"text"}
-data: {"type":"done"}
-```
-
----
-
-## 🗄️ 数据库模型
-
-当前使用 SQLite + Prisma，数据模型：
-
-```prisma
-model User {
-  id        String   @id @default(cuid())
-  name      String   @unique    // 用户名（唯一）
-  email     String   @unique    // 邮箱（唯一）
-  password  String               // bcrypt 加密后的密码
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-```
-
-### 数据库操作
+## 部署
 
 ```bash
-# 查看数据库状态
-npx prisma db push
-
-# 打开 Prisma Studio 可视化管理
-npx prisma studio
-
-# 重新生成 Prisma Client
-npx prisma generate
-```
-
----
-
-## 🏗️ 构建与部署
-
-### 本地构建
-
-```bash
+# 构建
 npm run build
+
+# 启动生产服务器
 npm start
+
+# 使用 PM2
+pm2 start npm --name "atoms-demo" -- start
 ```
 
-### 部署到 Vercel（推荐）
+## 使用流程
 
-1. 将代码推送到 GitHub
-2. 前往 [Vercel](https://vercel.com) 导入项目
-3. 配置环境变量（`DATABASE_URL`、`DASHSCOPE_API_KEY`）
-4. 点击部署
+1. **访问首页**：了解平台功能
+2. **注册/登录**：创建账号
+3. **输入需求**：描述你想要的应用（如"帮我做个水果网站"）
+4. **AI 识别**：自动识别意图和应用类型
+5. **生成方案**：Alex 制定开发计划
+6. **查看结果**：实时查看生成的应用
+7. **增量修改**：对生成的应用进行调整优化
 
-> 💡 Vercel 提供免费套餐，支持自动 HTTPS、全球 CDN、自动扩展。
+### 增量开发
 
-### 部署注意事项
+增量开发允许你在已生成的应用基础上添加新功能，而不是重新生成整个应用：
 
-- SQLite 数据库在 Vercel 的无服务器环境中每次请求可能重置，生产环境建议使用 PostgreSQL（Supabase）
-- API 密钥应存放在环境变量中，不要硬编码在代码里
-- 建议开启 Vercel 的 Preview Deployments 进行测试
+1. 应用生成完成后，系统会提供多个改进建议
+2. 点击任意建议，Alex 会在现有代码基础上添加新功能
+3. **显示详细工作流**（类似初次开发）：
+   - 读取现有项目文件（index.html、README.md 等）
+   - 分析现有 HTML 结构和组件
+   - 检查现有 CSS 样式定义
+   - 分析现有 JavaScript 逻辑
+   - 理解增量需求
+   - 设计新功能的技术方案
+   - 规划 HTML 结构修改
+   - 添加新的 CSS 样式规则
+   - 实现新功能 JavaScript 逻辑
+   - 集成新功能到现有代码
+   - 更新事件监听器绑定
+   - 优化样式兼容性和响应式
+   - 测试新功能交互逻辑
+   - 验证现有功能未被破坏
+   - 代码质量检查和优化
+   - **更新 README.md 文档**（自动记录版本历史和新功能）
+   - AI 生成修改后的完整代码
+   - ✓ 版本 X 开发完成
 
----
+4. **文件操作显示**：每个步骤显示具体的文件读取/修改操作
+5. **README.md 自动更新**：
+   - 初次生成时创建详细的 README.md
+   - 每次增量开发时自动更新，添加版本历史记录
+   - 记录每个版本的新增功能和变更说明
+6. 修改后的应用会实时更新到预览区
+7. **版本递增**：第一次增量开发显示"版本 2 开发完成"
+8. 可以继续迭代，每次版本递增
 
-## 🔒 安全说明
+**技术实现**：
+- 前端跟踪当前版本号（currentVersion state）
+- 每次增量开发前递增版本号并传递给 API
+- API 检测 prompt 中的"已有代码"标记
+- 发送详细的工作流步骤（workflow_item），包含：
+  - 文件读取操作（read_file）
+  - 文件修改操作（write_file）
+  - 每个步骤的 actions 数组（显示具体文件操作）
+- 逐步发送 source_file 消息，显示代码读取/修改过程
+- AI 在保留所有现有功能的前提下添加新功能
+- 返回完整修改后的代码（而非从头生成）
 
-- ✅ 密码使用 bcrypt 加密（salt rounds: 10）
-- ✅ 表单数据通过 Zod 进行校验
-- ✅ 邮箱唯一性检查
-- ⚠️ API 密钥应通过环境变量管理，避免提交到代码仓库
-- ⚠️ 生产环境建议使用更安全的会话管理方案（如 JWT + HttpOnly Cookie）
+## 意图分类
 
----
+| 意图 | 触发词示例 | 处理方式 |
+|------|-----------|---------|
+| Web 应用 | 网站、app、商城、系统 | 自动识别类型，生成完整应用 |
+| 问答对话 | 其他 | Alex 直接回答 |
 
-## 📝 开发命令
+## 应用类型
 
-| 命令 | 说明 |
-|------|------|
-| `npm run dev` | 启动开发服务器（热更新） |
-| `npm run build` | 构建生产版本 |
-| `npm start` | 启动生产服务器 |
-| `npx prisma studio` | 打开数据库可视化管理工具 |
-| `npx prisma db push` | 同步数据库模型 |
-| `npx prisma generate` | 重新生成 Prisma Client |
+- **电商**：商城、购物、商品展示
+- **游戏**：小游戏、互动娱乐
+- **社交**：论坛、社区、博客
+- **教育**：课程、学习平台
+- **内容**：资讯、视频、音乐
+- **工具**：计算器、待办、效率工具
 
----
+## 特性说明
 
-## 🗺️ 路线图
+### 流式响应
 
-- [ ] 支持更多 AI 模型（OpenAI、Anthropic 等）
-- [ ] 用户历史记录保存
-- [ ] 方案导出为 PDF / Word
-- [ ] 团队协作功能
-- [ ] 产品模板市场
-- [ ] 支付集成（订阅制）
-- [ ] 移动端 App
+所有 AI 生成内容都通过 SSE（Server-Sent Events）流式输出，用户可以实时看到生成进度。
 
----
+### 进度反馈
 
-## 📄 License
+长时间操作时显示详细步骤：
+- 匹配最佳模板与设计方案
+- 规划页面结构与交互逻辑
+- 优化功能模块与用户体验
+
+### 停止控制
+
+- **停止按钮**：中断当前生成
+- **继续**：从中断处继续
+- **重新生成**：开始全新任务
+
+### 聊天式交互
+
+用户输入的消息显示在右侧，类似即时通讯界面，提供自然的对话体验。
+
+## 已完成功能
+
+- [x] 智能意图识别（Web 应用 / 问答对话）
+- [x] 流式响应（SSE）
+- [x] 进度反馈（详细步骤显示）
+- [x] 停止控制（中断/继续/重新生成）
+- [x] 聊天式交互（用户消息右对齐）
+- [x] 增量开发（基于现有代码修改）
+- [x] 增量开发详细工作流（逐步显示修改过程）
+- [x] 版本号递增（版本 1 → 版本 2 → 版本 3...）
+- [x] 商品图片动态生成（根据需求匹配 emoji）
+
+## 待开发功能
+
+- [ ] HTTPS 配置
+- [ ] API 密钥环境变量化
+- [ ] 生成历史记录保存
+- [ ] 方案导出 PDF
+- [ ] 支付集成
+- [ ] 多模型支持
+
+## 许可证
 
 MIT
-
----
-
-<p align="center">
-  由 <strong>Atoms-Demo</strong> 团队用 ❤️ 构建
-</p>

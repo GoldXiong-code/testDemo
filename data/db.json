@@ -71,6 +71,482 @@
       "password": "$2b$10$H4DdpTXN66Fy3a90D8Q34.N24Hyh8S20i2FParDHmkXnK42/QaT0K",
       "createdAt": "2026-08-23T09:05:28.454Z",
       "updatedAt": "2026-08-23T09:05:28.454Z"
+    },
+    {
+      "id": "faee8b47-484d-4b20-8483-8ca1fdeb2821",
+      "name": "seccheck01",
+      "email": "seccheck01@test.com",
+      "password": "$2b$10$Llk9qMf9cmXpK80.oESCeOek8qshxyjOx9DTZRuVpXAIByQ9eGDRC",
+      "createdAt": "2026-08-28T08:26:50.278Z",
+      "updatedAt": "2026-08-28T08:26:50.278Z"
+    }
+  ],
+  "productImages": [
+    {
+      "id": "img_1787738917505_0",
+      "category": "electronics",
+      "name": "智能手机",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%236366f1%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23a855f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "手机",
+        "phone",
+        "smartphone",
+        "数码"
+      ],
+      "createdAt": "2026-08-26T10:08:37.505Z"
+    },
+    {
+      "id": "img_1787738917506_1",
+      "category": "electronics",
+      "name": "无线耳机",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23ef4444%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%92%BB%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "耳机",
+        "earbuds",
+        "headphones",
+        "数码"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_2",
+      "category": "electronics",
+      "name": "笔记本电脑",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2310b981%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2306b6d4%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "电脑",
+        "laptop",
+        "笔记本",
+        "数码"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_3",
+      "category": "electronics",
+      "name": "智能手表",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23ec4899%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f43f5e%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "手表",
+        "watch",
+        "smartwatch",
+        "数码"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_4",
+      "category": "electronics",
+      "name": "数码相机",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%233b82f6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%236366f1%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%93%B7%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "相机",
+        "camera",
+        "数码"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_5",
+      "category": "electronics",
+      "name": "平板电脑",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%238b5cf6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23d946ef%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%96%A5%EF%B8%8F%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "平板",
+        "tablet",
+        "ipad",
+        "数码"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_6",
+      "category": "electronics",
+      "name": "蓝牙音箱",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2314b8a6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2322d3ee%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%94%8A%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "音箱",
+        "speaker",
+        "蓝牙",
+        "数码"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_7",
+      "category": "electronics",
+      "name": "游戏手柄",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f97316%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23eab308%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%8E%AE%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "游戏",
+        "手柄",
+        "controller",
+        "gaming"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_8",
+      "category": "clothing",
+      "name": "白色T恤",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%236366f1%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23a855f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%91%95%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "T恤",
+        "tshirt",
+        "上衣",
+        "服装"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_9",
+      "category": "clothing",
+      "name": "牛仔裤",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23ef4444%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%91%96%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "裤子",
+        "jeans",
+        "牛仔",
+        "服装"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_10",
+      "category": "clothing",
+      "name": "运动鞋",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2310b981%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2306b6d4%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "鞋子",
+        "shoes",
+        "sneakers",
+        "运动鞋"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_11",
+      "category": "clothing",
+      "name": "时尚手提包",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23ec4899%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f43f5e%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%91%9F%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "包",
+        "bag",
+        "手提包",
+        "配饰"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_12",
+      "category": "clothing",
+      "name": "太阳眼镜",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%233b82f6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%236366f1%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "眼镜",
+        "sunglasses",
+        "配饰"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_13",
+      "category": "clothing",
+      "name": "连衣裙",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%238b5cf6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23d946ef%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%91%9C%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "裙子",
+        "dress",
+        "连衣裙",
+        "女装"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_14",
+      "category": "clothing",
+      "name": "夹克外套",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2314b8a6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2322d3ee%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%95%B6%EF%B8%8F%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "外套",
+        "jacket",
+        "夹克",
+        "服装"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_15",
+      "category": "clothing",
+      "name": "棒球帽",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f97316%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23eab308%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%91%92%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "帽子",
+        "hat",
+        "cap",
+        "配饰"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_16",
+      "category": "home",
+      "name": "沙发",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%236366f1%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23a855f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%9B%8B%EF%B8%8F%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "沙发",
+        "sofa",
+        "家具",
+        "客厅"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_17",
+      "category": "home",
+      "name": "台灯",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23ef4444%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%AA%91%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "灯",
+        "lamp",
+        "台灯",
+        "照明"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_18",
+      "category": "home",
+      "name": "花瓶",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2310b981%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2306b6d4%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%EF%B8%8F%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "花瓶",
+        "vase",
+        "装饰",
+        "摆件"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_19",
+      "category": "home",
+      "name": "床上用品",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23ec4899%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f43f5e%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%92%A1%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "床",
+        "bedding",
+        "卧室",
+        "家居"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_20",
+      "category": "home",
+      "name": "餐具套装",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%233b82f6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%236366f1%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%96%BC%EF%B8%8F%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "餐具",
+        "kitchen",
+        "厨房",
+        "碗碟"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_21",
+      "category": "home",
+      "name": "装饰画",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%238b5cf6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23d946ef%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%AA%B4%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "画",
+        "art",
+        "装饰画",
+        "墙面"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_22",
+      "category": "home",
+      "name": "收纳盒",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2314b8a6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2322d3ee%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "收纳",
+        "storage",
+        "整理",
+        "家居"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_23",
+      "category": "home",
+      "name": "抱枕",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f97316%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23eab308%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%A7%B9%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "抱枕",
+        "pillow",
+        "靠垫",
+        "家居"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_24",
+      "category": "food",
+      "name": "新鲜水果",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%236366f1%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23a855f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%8D%95%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "水果",
+        "fruit",
+        "新鲜",
+        "食品"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_25",
+      "category": "food",
+      "name": "咖啡",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23ef4444%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "咖啡",
+        "coffee",
+        "饮品",
+        "饮料"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_26",
+      "category": "food",
+      "name": "蛋糕甜点",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2310b981%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2306b6d4%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%8D%A3%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "蛋糕",
+        "cake",
+        "甜点",
+        "烘焙"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_27",
+      "category": "food",
+      "name": "新鲜蔬菜",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23ec4899%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f43f5e%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "蔬菜",
+        "vegetable",
+        "新鲜",
+        "食品"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_28",
+      "category": "food",
+      "name": "巧克力",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%233b82f6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%236366f1%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%8D%BA%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "巧克力",
+        "chocolate",
+        "零食",
+        "糖果"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_29",
+      "category": "food",
+      "name": "茶叶",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%238b5cf6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23d946ef%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "茶",
+        "tea",
+        "茶叶",
+        "饮品"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_30",
+      "category": "sports",
+      "name": "瑜伽垫",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2314b8a6%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2322d3ee%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "瑜伽",
+        "yoga",
+        "健身",
+        "运动"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_31",
+      "category": "sports",
+      "name": "哑铃",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f97316%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23eab308%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%9A%B4%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "哑铃",
+        "dumbbell",
+        "健身",
+        "器材"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_32",
+      "category": "sports",
+      "name": "篮球",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%236366f1%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23a855f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "篮球",
+        "basketball",
+        "球类",
+        "运动"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_33",
+      "category": "sports",
+      "name": "自行车",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f59e0b%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23ef4444%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%8F%80%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "自行车",
+        "bicycle",
+        "bike",
+        "骑行"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_34",
+      "category": "sports",
+      "name": "足球",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2310b981%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2306b6d4%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "足球",
+        "football",
+        "soccer",
+        "球类"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
+    },
+    {
+      "id": "img_1787738917506_35",
+      "category": "sports",
+      "name": "跑步鞋",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23ec4899%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23f43f5e%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3E%F0%9F%8F%93%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "tags": [
+        "跑鞋",
+        "running",
+        "运动鞋",
+        "运动"
+      ],
+      "createdAt": "2026-08-26T10:08:37.506Z"
     }
   ]
 }

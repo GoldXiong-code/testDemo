@@ -59,3 +59,13 @@ body {
 .input-glow:focus-within {
   animation: borderGlow 2s ease-in-out infinite;
 }
+
+/* 工作流进行中 - 圆圈和文字渐变闪烁 */
+@keyframes workflowPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.workflow-pulse {
+  animation: workflowPulse 1.5s ease-in-out infinite;
+}
