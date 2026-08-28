@@ -1,4 +1,4 @@
-// Prisma Schema - Atoms-Demo 用户表
+// Prisma Schema - Atoms-Demo
 
 generator client {
   provider = "prisma-client-js"
@@ -18,4 +18,33 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+// 生成的应用项目表（Builder 项目持久化）
+model Project {
+  id        String   @id @default(cuid())
+  userId    String?  // 已登录用户 ID（未登录为空）
+  clientId  String?  // 浏览器设备 ID（未登录时用于找回历史）
+  title     String
+  category  String
+  prompt    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  versions  ProjectVersion[]
+
+  @@map("projects")
+}
+
+// 项目版本表（每次生成/重新生成记一个版本）
+model ProjectVersion {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  planJson    String?  // 开发计划（JSON 字符串）
+  fullCode    String?  // 单文件 HTML 完整代码
+  sourceFiles String?  // 工程源码文件（JSON：文件名→内容）
+  previewHtml String?  // 构建后的预览 HTML
+  createdAt   DateTime @default(now())
+
+  @@map("project_versions")
 }

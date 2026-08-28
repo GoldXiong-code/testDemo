@@ -8,6 +8,7 @@ export interface User {
 
 const USERS_KEY = "atoms_demo_users";
 const CURRENT_USER_KEY = "atoms_demo_current_user";
+const CLIENT_ID_KEY = "atoms_demo_client_id";
 
 export function getUsers(): User[] {
   if (typeof window === "undefined") return [];
@@ -84,6 +85,17 @@ export function loginUser(email: string, password: string): { success: boolean; 
 
 export function logoutUser() {
   setCurrentUser(null);
+}
+
+// 浏览器设备 ID：未登录用户找回历史项目用（持久化在 localStorage，首次访问生成）
+export function getClientId(): string {
+  if (typeof window === "undefined") return "";
+  let id = localStorage.getItem(CLIENT_ID_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(CLIENT_ID_KEY, id);
+  }
+  return id;
 }
 
 // AI 生成模拟

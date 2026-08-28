@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# SQLite 数据库（运行时数据，不入库）
+/dev.db
+/dev.db-journal

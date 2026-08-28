@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getTemplateByCategory, renderTemplate, getDefaultTemplateData } from "@/lib/templates";
 import { produceReactProject } from "@/lib/reactgen";
 import { validateGeneratedHtml } from "@/lib/builder";
+import { saveGeneration } from "@/lib/projects";
 
 // 密钥只从环境变量读取（.env 文件，已在 .gitignore 中），禁止硬编码
 const API_KEY = process.env.DASHSCOPE_API_KEY || "";
@@ -920,7 +921,7 @@ export async function POST(request: Request) {
       { headers: { "Content-Type": "text/event-stream" } }
     );
   }
-  const { prompt, category, plan, style, detail, version, needsAuth } = await request.json();
+  const { prompt, category, plan, style, detail, version, needsAuth, userId, clientId, projectId } = await request.json();
 
   // 检测是否为增量开发（prompt 中包含"已有代码"）
   const isIncremental = prompt && prompt.includes("基于以下已有代码") && prompt.includes("已有代码：\n");
@@ -1157,15 +1158,19 @@ export async function POST(request: Request) {
           }
 
           // 发送修改后的代码文件（多文件结构：拆分为 index.html / styles / scripts）
+          let incOutFiles: Record<string, string> = {};
+          let incPreviewHtml = "";
           const reactProject = await produceReactProject(sanitized);
           if (reactProject) {
+            incOutFiles = reactProject.files;
+            incPreviewHtml = reactProject.previewHtml;
             for (const [incName, incContent] of Object.entries(reactProject.files)) {
               send({ type: "source_file", filename: incName, content: incContent });
             }
             send({ type: "built_preview", html: reactProject.previewHtml });
           } else {
-            const incFiles = extractSourceFiles(sanitized, categoryKey);
-            for (const [incName, incContent] of Object.entries(incFiles)) {
+            incOutFiles = extractSourceFiles(sanitized, categoryKey);
+            for (const [incName, incContent] of Object.entries(incOutFiles)) {
               send({ type: "source_file", filename: incName, content: incContent });
             }
           }          // 标记 AI 生成步骤完成
@@ -1206,6 +1211,7 @@ ${featureTitle} - ${featureDesc}
 `;
 
           send({ type: "source_file", filename: "README.md", content: updatedReadme });
+          incOutFiles["README.md"] = updatedReadme;
 
           // 发送最终步骤
           send({ type: "workflow_item", number: stepNum + 2, text: `✓ 版本 ${versionNum} 开发完成：${featureTitle}`, done: true });
@@ -1226,6 +1232,17 @@ ${featureTitle} - ${featureDesc}
             category: categoryKey,
             suggestions: incrementalSuggestions
           });
+
+          // 持久化：在已有项目上追加新版本（title 留空表示保留原标题）
+          const incSavedId = await saveGeneration({
+            projectId, userId, clientId,
+            title: "",
+            category: categoryKey, prompt: prompt || "",
+            fullCode: sanitized,
+            sourceFiles: incOutFiles,
+            previewHtml: incPreviewHtml,
+          });
+          if (incSavedId) send({ type: "project_saved", projectId: incSavedId });
 
           send({ type: "done" });
           controller.close();
@@ -1794,16 +1811,20 @@ ${categoryKey === "game"
           // 转换为 React + TypeScript 工程并自动构建（失败时回退 HTML 多文件输出）
           const convertStepNum = stepCounter + 1;
           send({ type: "workflow_item", number: convertStepNum, text: "转换为 React + TypeScript 工程并自动构建", done: false });
+          let outFiles: Record<string, string> = {};
+          let previewHtml = "";
           const reactProject = await produceReactProject(fullCode);
           if (reactProject) {
+            outFiles = reactProject.files;
+            previewHtml = reactProject.previewHtml;
             for (const [filename, content] of Object.entries(reactProject.files)) {
               send({ type: "source_file", filename, content });
             }
             send({ type: "built_preview", html: reactProject.previewHtml });
             send({ type: "workflow_item", number: convertStepNum, text: "转换为 React + TypeScript 工程并自动构建", done: true });
           } else {
-            const sourceFiles = extractSourceFiles(fullCode, categoryKey);
-            for (const [filename, content] of Object.entries(sourceFiles)) {
+            outFiles = extractSourceFiles(fullCode, categoryKey);
+            for (const [filename, content] of Object.entries(outFiles)) {
               send({ type: "source_file", filename, content });
             }
             send({ type: "workflow_item", number: convertStepNum, text: "转换为 React + TypeScript 工程并自动构建（已回退多文件版）", done: true });
@@ -1913,6 +1934,22 @@ README.md 应包含以下部分：
             category: categoryKey,
             suggestions,
           });
+
+          // 持久化：项目 + 版本写入 SQLite（重新生成时沿用 projectId 追加版本）
+          const savedProjectId = await saveGeneration({
+            projectId,
+            userId,
+            clientId,
+            title: (prompt || "").trim().slice(0, 24) || `${catLabel}项目`,
+            category: categoryKey,
+            prompt: prompt || "",
+            planJson: JSON.stringify(plan || []),
+            fullCode,
+            sourceFiles: outFiles,
+            previewHtml,
+          });
+          if (savedProjectId) send({ type: "project_saved", projectId: savedProjectId });
+
           send({ type: "done" });
           controller.close();
         } else {

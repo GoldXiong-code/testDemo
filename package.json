@@ -8,6 +8,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.4",
+    "@prisma/adapter-libsql": "^7.9.1",
     "@prisma/client": "^7.9.1",
     "bcrypt": "^6.0.0",
     "lucide-react": "^1.33.0",

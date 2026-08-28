@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, Sparkles, Code, RotateCcw, Download, Eye, CheckCircle2, Plus } from "lucide-react";
 import Link from "next/link";
-import { getCurrentUser } from "@/lib/store";
+import { getCurrentUser, getClientId } from "@/lib/store";
 
 interface FileAction {
   type: "read" | "write";
@@ -139,6 +139,13 @@ function AppContent() {
   // 代码基线：记录每次生成时的文件内容，用于判断"用户是否改过代码"和"丢弃更改"还原
   const baselineFilesRef = useRef<Record<string, string>>({ ...(storedProject.editorFiles || {}) });
 
+  // 项目持久化身份：userId（登录用户）/ clientId（未登录设备 ID）/ projectId（当前项目，增量开发时复用）
+  const identityRef = useRef<{ userId: string; clientId: string; projectId: string }>({ userId: "", clientId: "", projectId: storedProject.currentProjectId || "" });
+  const [currentProjectId, setCurrentProjectId] = useState<string>(storedProject.currentProjectId || "");
+  // 历史项目列表（Atoms 云面板）
+  const [historyProjects, setHistoryProjects] = useState<{ id: string; title: string; category: string; prompt: string; updatedAt: string; _count?: { versions: number } }[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
   // 持久化项目状态到 localStorage
   useEffect(() => {
     if (!user) return;
@@ -152,9 +159,10 @@ function AppContent() {
         activeView,
         currentStep,
         currentVersion,
+        currentProjectId,
       }));
     } catch { /* storage full or unavailable */ }
-  }, [user, messages, previewCode, editorFiles, activeFile, showPreview, activeView, currentStep, currentVersion]);
+  }, [user, messages, previewCode, editorFiles, activeFile, showPreview, activeView, currentStep, currentVersion, currentProjectId]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -167,6 +175,8 @@ function AppContent() {
       return;
     }
     setUser(u);
+    identityRef.current.userId = u.id;
+    identityRef.current.clientId = getClientId();
 
     const urlPrompt = searchParams.get("prompt");
     const urlFresh = searchParams.get("fresh");
@@ -955,6 +965,9 @@ function AppContent() {
             style: "",
             detail: detailInput,
             needsAuth,
+            userId: identityRef.current.userId,
+            clientId: identityRef.current.clientId,
+            projectId: identityRef.current.projectId,
           }),
           signal: controller.signal,
         });
@@ -1144,6 +1157,10 @@ function AppContent() {
                       suggestions: data.suggestions,
                     },
                   ]);
+                } else if (data.type === "project_saved") {
+                  // 服务端已把项目持久化到数据库 → 记录项目 ID（后续增量开发复用）
+                  identityRef.current.projectId = data.projectId;
+                  setCurrentProjectId(data.projectId);
                 } else if (data.type === "error") {
                   setMessages((prev) => [
                     ...prev,
@@ -1200,6 +1217,54 @@ function AppContent() {
     if (css) html = html.replace(/<link[^>]*href=["']styles\/main\.css["'][^>]*>/i, "<style>\n" + css + "\n</style>");
     if (js) html = html.replace(/<script[^>]*src=["']scripts\/main\.js["'][^>]*>\s*<\/script>/i, "<script>\n" + js + "\n<" + "/script>");
     return html;
+  };
+
+  // 拉取历史项目列表（登录按 userId，未登录按设备 ID）
+  const loadHistory = async () => {
+    const userId = identityRef.current.userId;
+    const clientId = identityRef.current.clientId;
+    const q = userId ? `userId=${userId}` : clientId ? `clientId=${clientId}` : "";
+    if (!q) return;
+    setHistoryLoading(true);
+    try {
+      const res = await fetch(`/api/projects?${q}`);
+      const data = await res.json();
+      setHistoryProjects(data.projects || []);
+    } catch { /* ignore */ }
+    setHistoryLoading(false);
+  };
+
+  // 打开历史项目 → 恢复预览与编辑器
+  const openProject = async (id: string) => {
+    try {
+      const res = await fetch(`/api/projects/${id}`);
+      const data = await res.json();
+      const p = data.project;
+      if (!p || !p.version) return;
+      identityRef.current.projectId = p.id;
+      setCurrentProjectId(p.id);
+      const files: Record<string, string> = p.version.sourceFiles || {};
+      if (Object.keys(files).length) {
+        setEditorFiles(files);
+        baselineFilesRef.current = { ...files };
+        setActiveFile(files["README.md"] !== undefined ? "README.md" : Object.keys(files)[0]);
+      }
+      const preview = p.version.previewHtml || (Object.keys(files).length ? assemblePreviewFromFiles(files) : p.version.fullCode || "");
+      if (preview) { safeSetPreviewCode(preview); setShowPreview(true); }
+      setActiveView("preview");
+    } catch { /* ignore */ }
+  };
+
+  // 删除历史项目
+  const removeProject = async (id: string) => {
+    try {
+      await fetch(`/api/projects/${id}`, { method: "DELETE" });
+      setHistoryProjects((prev) => prev.filter((p) => p.id !== id));
+      if (identityRef.current.projectId === id) {
+        identityRef.current.projectId = "";
+        setCurrentProjectId("");
+      }
+    } catch { /* ignore */ }
   };
 
   // 预览：把用户改过的代码重新构建/拼装，跳到"应用查看器"查看效果
@@ -1300,6 +1365,9 @@ function AppContent() {
             style: "",
             detail: "",
             version: newVersion, // 传递新版本号
+            userId: identityRef.current.userId,
+            clientId: identityRef.current.clientId,
+            projectId: identityRef.current.projectId,
           }),
           signal: controller.signal,
         });
@@ -1439,6 +1507,9 @@ function AppContent() {
                     type: "version_complete", groupId: gid, version: data.version, category: data.category,
                     suggestions: data.suggestions,
                   }]);
+                } else if (data.type === "project_saved") {
+                  identityRef.current.projectId = data.projectId;
+                  setCurrentProjectId(data.projectId);
                 } else if (data.type === "error") {
                   setMessages((prev) => [...prev, {
                     id: (Date.now() + Math.random()).toString(), role: "alex", content: data.message, type: "text", groupId: gid,
@@ -1726,7 +1797,7 @@ function AppContent() {
           </button>
           {/* Atoms云 */}
           <button
-            onClick={() => setActiveView("cloud")}
+            onClick={() => { setActiveView("cloud"); loadHistory(); }}
             className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all ${
               activeView === "cloud"
                 ? "bg-white/15 text-white border border-white/20"
@@ -2144,13 +2215,58 @@ function AppContent() {
             );
           })()}
           {activeView === "cloud" && (
-            <div className="flex items-center justify-center h-full bg-[var(--background)]">
-              <div className="text-center">
-                <svg className="w-12 h-12 text-[var(--text-muted)] mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-                </svg>
-                <p className="text-sm text-[var(--text-muted)] mb-1">Atoms 云</p>
-                <p className="text-xs text-[var(--text-muted)]">一键部署到云端（即将上线）</p>
+            <div className="flex flex-col h-full bg-[var(--background)] overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--card-border)]">
+                <div>
+                  <h3 className="text-white font-semibold text-sm">历史项目</h3>
+                  <p className="text-xs text-[var(--text-muted)] mt-0.5">已保存到本机数据库，刷新页面不会丢失</p>
+                </div>
+                <button
+                  onClick={loadHistory}
+                  className="p-2 rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-colors"
+                  title="刷新列表"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-4">
+                {historyLoading ? (
+                  <div className="flex items-center justify-center h-full text-[var(--text-muted)] text-sm">加载中…</div>
+                ) : historyProjects.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-center">
+                    <svg className="w-12 h-12 text-[var(--text-muted)] mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+                    </svg>
+                    <p className="text-sm text-[var(--text-muted)] mb-1">还没有生成记录</p>
+                    <p className="text-xs text-[var(--text-muted)]">在左侧输入想法生成应用后，会自动保存到这里</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {historyProjects.map((p) => (
+                      <div
+                        key={p.id}
+                        className="group flex items-center justify-between gap-3 p-3 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] hover:border-indigo-500/40 transition-colors cursor-pointer"
+                        onClick={() => openProject(p.id)}
+                      >
+                        <div className="min-w-0">
+                          <div className="text-white font-medium text-sm truncate">{p.title}</div>
+                          <div className="text-xs text-[var(--text-muted)] mt-0.5 truncate">
+                            {p.category} · {p._count?.versions ?? 1} 个版本 · {new Date(p.updatedAt).toLocaleString("zh-CN", { hour12: false })}
+                          </div>
+                        </div>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); removeProject(p.id); }}
+                          className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                          title="删除"
+                        >
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
