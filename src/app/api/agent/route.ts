@@ -939,12 +939,17 @@ export async function POST(request: Request) {
           // ===== 增量开发：基于已有代码添加新功能 =====
           const versionNum = version || 2; // 使用传入的版本号，默认为 2
 
-          // 从 prompt 中提取已有代码和新需求
+          // 从 prompt 中提取已有代码和修改要求（兼容"按要求修改"新格式与"添加新功能"旧格式）
           const codeMatch = prompt.match(/已有代码：\n([\s\S]*)$/);
           const existingCode = codeMatch ? codeMatch[1].trim() : "";
-          const requirementMatch = prompt.match(/基于以下已有代码，添加新功能：([\s\S]+?)。需求：([\s\S]+?)\n\n已有代码/);
-          const featureTitle = requirementMatch ? requirementMatch[1].trim() : "新功能";
-          const featureDesc = requirementMatch ? requirementMatch[2].trim() : "";
+          const newFormatMatch = prompt.match(/基于以下已有代码，请按要求修改：([\s\S]+?)\n\n已有代码/);
+          const oldFormatMatch = prompt.match(/基于以下已有代码，添加新功能：([\s\S]+?)。需求：([\s\S]+?)\n\n已有代码/);
+          const requirement = newFormatMatch
+            ? newFormatMatch[1].trim()
+            : oldFormatMatch
+              ? `添加功能「${oldFormatMatch[1].trim()}」：${oldFormatMatch[2].trim()}`
+              : "优化和改进这个应用";
+          const featureTitle = requirement.length > 20 ? requirement.slice(0, 20) + "…" : requirement;
 
           const categoryKey = category === "custom" ? "tool" : (category || "tool");
           const catLabel = getCategoryLabel(categoryKey);
@@ -990,9 +995,9 @@ export async function POST(request: Request) {
               thinking: "分析交互逻辑...\n\n状态管理：用数据对象存储应用状态，通过渲染函数把状态同步到页面。\n\n事件绑定：通过监听器处理用户操作，操作完成后更新状态并触发重新渲染。\n\n数据渲染：根据当前状态更新页面内容，采用直接操作页面元素的方式。",
             },
             {
-              text: `理解增量需求：${featureTitle}`,
+              text: `理解修改需求：${featureTitle}`,
               actions: [],
-              thinking: `理解新功能需求...\n\n用户希望在现有应用上添加：「${featureTitle}」\n详细描述：${featureDesc || "用户未提供详细描述，需要基于标题推断实现方向"}\n\n分析这个需求需要：\n- 哪些新的 DOM 元素\n- 哪些新的 CSS 样式\n- 哪些新的 JS 函数和事件\n- 对现有功能的影响范围`,
+              thinking: `理解修改需求...\n\n用户要求：「${requirement}」\n\n分析这个需求需要：\n- 需要改动哪些 DOM 元素\n- 需要改动哪些 CSS 样式\n- 需要改动哪些 JS 函数和事件\n- 对现有功能的影响范围`,
             },
             {
               text: "设计新功能的技术方案",
@@ -1118,21 +1123,20 @@ export async function POST(request: Request) {
                   role: "system",
                   content: `${systemPrompt}
 
-你现在需要对已有的 HTML 代码进行修改，添加新功能。
+你现在需要对已有的 HTML 代码进行修改（可以是新增功能、修复 Bug 或调整样式）。
 
 **重要规则：**
-1. 保留现有代码的所有功能和样式
-2. 在现有代码基础上添加新功能
-3. 确保新功能与现有代码风格一致
-4. 返回完整的 HTML 代码（包含新增功能）
+1. 保留现有代码的所有功能和样式（除非用户明确要求删除或改动）
+2. 严格按照用户的修改要求执行，不要擅自改动无关内容
+3. 确保修改后的代码与现有风格一致
+4. 返回完整的 HTML 代码（包含所有修改）
 5. 不要返回 markdown 格式，只返回纯 HTML 代码
 
-新功能需求：${featureTitle}
-详细描述：${featureDesc}`
+用户的修改要求：${requirement}`
                 },
                 {
                   role: "user",
-                  content: `以下是现有代码，请在此基础上添加新功能：\n\n${existingCode}`
+                  content: `以下是现有代码，请按要求修改：\n\n${existingCode}`
                 }
               ],
               { max_tokens: 16384, temperature: 0.3, enableThinking: false },
@@ -1183,7 +1187,7 @@ export async function POST(request: Request) {
 
 ## 项目简介
 
-${featureTitle} - ${featureDesc}
+${featureTitle}
 
 ## 🚀 如何运行
 
@@ -1202,8 +1206,7 @@ ${featureTitle} - ${featureDesc}
 ## 版本历史
 
 ### v${versionNum}.0.0
-- 新增功能：${featureTitle}
-- ${featureDesc}
+- 本次修改：${featureTitle}
 
 ### v1.0.0
 - 初始版本

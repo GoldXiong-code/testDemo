@@ -241,6 +241,13 @@ function AppContent() {
       return;
     }
 
+    // 已有应用 → 后续输入视为"修改/修复当前应用"（修 Bug 闭环），而不是新建项目
+    const hasExistingApp = !!previewCode && previewCode.length > 100;
+    if (hasExistingApp && !isNewTask) {
+      handleModify(text);
+      return;
+    }
+
     // 中断之前的请求
     abortControllerRef.current?.abort();
     const controller = new AbortController();
@@ -1314,8 +1321,8 @@ function AppContent() {
     editorFiles[activeFile] !== undefined &&
     editorFiles[activeFile] !== baselineFilesRef.current[activeFile];
 
-  // 增量开发：基于上一个版本继续开发新功能
-  const handleIncremental = (suggestion: { title: string; description: string }) => {
+  // 增量修改：基于已有代码做修改 / 修复 Bug / 添加功能（统一入口）
+  const runIncremental = (requirement: string) => {
     if (!previewCode || loading) return;
 
     // 中断之前的请求
@@ -1335,7 +1342,7 @@ function AppContent() {
     nextGroupId.current += 1;
     const gid = nextGroupId.current;
 
-    const userMsg = `请在上一个版本基础上添加功能：${suggestion.title}。${suggestion.description}`;
+    const userMsg = requirement;
     setMessages((prev) => [...prev, { id: Date.now().toString(), role: "user", content: userMsg, type: "text", groupId: gid }]);
     setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: "alex", content: "工程师", type: "text", groupId: gid }]);
 
@@ -1359,9 +1366,9 @@ function AppContent() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            prompt: `基于以下已有代码，添加新功能：${suggestion.title}。需求：${suggestion.description}\n\n已有代码：\n${previewCode}`,
+            prompt: `基于以下已有代码，请按要求修改：${requirement}\n\n已有代码：\n${previewCode}`,
             category: selectedCategory || "tool",
-            plan: [{ title: suggestion.title, description: suggestion.description }],
+            plan: [{ title: requirement.slice(0, 30), description: requirement }],
             style: "",
             detail: "",
             version: newVersion, // 传递新版本号
@@ -1493,7 +1500,7 @@ function AppContent() {
                   setMessages((prev) => prev.map(m => (m._liveMark && m.type === "workflow" ? { ...m, type: "text" as const } : m)));
                   setMessages((prev) => [...prev, {
                     id: (Date.now() + Math.random()).toString(), role: "alex",
-                    content: "增量开发完成！新功能已添加。", type: "code", groupId: gid, code: fullCode,
+                    content: "修改已完成，预览已更新。", type: "code", groupId: gid, code: fullCode,
                   }]);
                 } else if (data.type === "built_preview") {
                   // 服务器构建完成的 React 应用预览（替换流式 HTML 预览）
@@ -1526,7 +1533,7 @@ function AppContent() {
           }]);
         } else {
           setMessages((prev) => [...prev, {
-            id: (Date.now() + Math.random()).toString(), role: "alex", content: "❌ 增量开发失败，请稍后重试。", type: "text", groupId: gid,
+            id: (Date.now() + Math.random()).toString(), role: "alex", content: "❌ 修改失败，请稍后重试。", type: "text", groupId: gid,
           }]);
         }
       }
@@ -1538,6 +1545,14 @@ function AppContent() {
       isStreamingRef.current = false;
     })();
   };
+
+  // 建议按钮：在现有应用上继续加功能
+  const handleIncremental = (suggestion: { title: string; description: string }) =>
+    runIncremental(`添加功能「${suggestion.title}」：${suggestion.description}`);
+
+  // 输入框：修复 Bug / 调整现有应用
+  const handleModify = (text: string) =>
+    runIncremental(`请对当前应用做如下修改：${text}`);
 
   const handleReset = () => {
     setMessages([]);
@@ -1736,7 +1751,7 @@ function AppContent() {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); } }}
-                placeholder="请 Alex 构建一个 Web 应用..."
+                placeholder={previewCode && previewCode.length > 100 ? "描述要修改的地方，例如：把按钮改成蓝色 / 修复点击没反应的问题..." : "请 Alex 构建一个 Web 应用..."}
                 rows={2}
                 className="flex-1 px-4 py-3 bg-[var(--input-bg)] border border-[var(--card-border)] rounded-xl text-white placeholder:text-[var(--text-muted)] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors resize-none text-sm"
               />
@@ -2345,7 +2360,7 @@ function SuggestionsPanel({
         <textarea
           value={customInput}
           onChange={(e) => setCustomInput(e.target.value)}
-          placeholder="或输入自定义需求，描述你想添加的功能..."
+          placeholder="或输入自定义需求，描述想添加的功能或要修复的问题..."
           rows={3}
           className="w-full px-3 py-2 bg-[var(--input-bg)] border border-[var(--card-border)] rounded-lg text-sm text-white placeholder:text-[var(--text-muted)] focus:outline-none focus:border-indigo-500 resize-none"
         />
