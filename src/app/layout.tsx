@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-// 强制动态渲染，避免页面被静态缓存（否则部署后浏览器会一直用旧页面，出现"访问不了/白屏"）
-export const dynamic = "force-dynamic";
+// 用 ISR 短周期重新验证：既避免部署后旧页面被长期缓存（1年），又保持静态渲染（不流式输出，避免浏览器"连接被终断"）
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Atoms-Demo",
