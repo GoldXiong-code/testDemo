@@ -93,7 +93,7 @@ export default function Hero() {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="请 Alex 构建一个 Web 应用..."
+          placeholder="构建一个..."
           rows={3}
           className="w-full px-6 py-5 bg-transparent text-white placeholder:text-[var(--text-muted)] text-base resize-none focus:outline-none"
         />
