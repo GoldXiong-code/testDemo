@@ -22,9 +22,10 @@ export default function Navbar() {
   }, [pathname]);
 
   const handleLogout = () => {
-    logoutUser();
+    // 先更新界面状态，再清除本地存储，确保即使存储操作异常界面也能立即切换
     setCurrentUser(null);
     setUserMenuOpen(false);
+    logoutUser();
     router.push("/");
   };
 
@@ -89,6 +90,7 @@ export default function Navbar() {
                     AI 生成
                   </Link>
                   <button
+                    type="button"
                     onClick={handleLogout}
                     className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-white/10 transition-colors text-left"
                   >

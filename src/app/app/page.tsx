@@ -633,6 +633,8 @@ function AppContent() {
   handleSendRef.current = handleSend;
 
   const handleFormSubmit = (overrideCategory?: string, userText?: string, overrideNeedsAuth?: boolean) => {
+    // 防御：按钮 onClick 会把点击事件对象当成第一个参数传入，这里过滤掉非字符串值
+    if (overrideCategory != null && typeof overrideCategory !== "string") overrideCategory = undefined as any;
     const category = overrideCategory || (selectedCategory === "custom" ? customCategory : selectedCategory);
     if (!category) return;
     const authFlag = overrideNeedsAuth ?? needsAuth;
@@ -750,7 +752,7 @@ function AppContent() {
                           });
                         }, 300);
                       } else {
-                        items.push({ ...newItem, done: false });
+                        items.push({ ...newItem });
                       }
                       newMsgs[lastIdx] = { ...newMsgs[lastIdx], workflowTimeline: items };
                     } else {
@@ -1043,7 +1045,7 @@ function AppContent() {
                           });
                         }, 300);
                       } else {
-                        items.push({ ...newItem, done: false });
+                        items.push({ ...newItem });
                       }
                       newMsgs[lastIdx] = { ...newMsgs[lastIdx], workflowTimeline: items };
                     } else {
@@ -1434,7 +1436,7 @@ function AppContent() {
                           });
                         }, 300);
                       } else {
-                        items.push({ ...newItem, done: false });
+                        items.push({ ...newItem });
                       }
                       newMsgs[timelineIdx] = { ...newMsgs[timelineIdx], workflowTimeline: items };
                     } else {
@@ -2815,7 +2817,7 @@ function FormPanel({
   onSubmit: () => void;
   loading: boolean;
 }) {
-  const allCategories = [...categories, { key: "custom", label: "", icon: "", desc: "" }];
+  const allCategories = categories;
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -2843,7 +2845,7 @@ function FormPanel({
                     type="text"
                     value={customCategory}
                     onChange={(e) => onCustomCategory(e.target.value)}
-                    placeholder="请输入"
+                    placeholder=""
                     className="px-3 py-1.5 bg-[var(--input-bg)] border border-[var(--card-border)] rounded-lg text-sm text-white placeholder:text-[var(--text-muted)] focus:outline-none focus:border-indigo-500 flex-1"
                   />
                 ) : (
@@ -2868,7 +2870,7 @@ function FormPanel({
             <textarea
               value={detailInput}
               onChange={(e) => onDetailInput(e.target.value)}
-              placeholder="请输入（选填）"
+              placeholder=""
               rows={4}
               className="w-full px-4 py-3 bg-[var(--input-bg)] border border-[var(--card-border)] rounded-xl text-sm text-white placeholder:text-[var(--text-muted)] focus:outline-none focus:border-indigo-500 resize-none"
             />
@@ -2896,7 +2898,7 @@ function FormPanel({
             添加更多
           </button>
           <button
-            onClick={onSubmit}
+            onClick={() => onSubmit()}
             disabled={loading || !selectedCategory || (selectedCategory === "custom" && !customCategory)}
             className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white rounded-xl font-medium transition-colors text-sm"
           >

@@ -12,8 +12,12 @@ const CLIENT_ID_KEY = "atoms_demo_client_id";
 
 export function getUsers(): User[] {
   if (typeof window === "undefined") return [];
-  const data = localStorage.getItem(USERS_KEY);
-  return data ? JSON.parse(data) : [];
+  try {
+    const data = localStorage.getItem(USERS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
 }
 
 export function saveUsers(users: User[]) {
@@ -22,15 +26,23 @@ export function saveUsers(users: User[]) {
 
 export function getCurrentUser(): User | null {
   if (typeof window === "undefined") return null;
-  const data = localStorage.getItem(CURRENT_USER_KEY);
-  return data ? JSON.parse(data) : null;
+  try {
+    const data = localStorage.getItem(CURRENT_USER_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch {
+    return null;
+  }
 }
 
 export function setCurrentUser(user: User | null) {
-  if (user) {
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-  } else {
-    localStorage.removeItem(CURRENT_USER_KEY);
+  try {
+    if (user) {
+      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    } else {
+      localStorage.removeItem(CURRENT_USER_KEY);
+    }
+  } catch {
+    // localStorage 不可用或被禁用时静默失败，不影响页面交互
   }
 }
 

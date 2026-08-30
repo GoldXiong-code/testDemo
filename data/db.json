@@ -79,6 +79,14 @@
       "password": "$2b$10$Llk9qMf9cmXpK80.oESCeOek8qshxyjOx9DTZRuVpXAIByQ9eGDRC",
       "createdAt": "2026-08-28T08:26:50.278Z",
       "updatedAt": "2026-08-28T08:26:50.278Z"
+    },
+    {
+      "id": "119ccce3-be4d-4813-b261-5d74e42fb3ef",
+      "name": "yindao",
+      "email": "yindao@123.com",
+      "password": "$2b$10$cKcgMO8nd7EDRqpJC9K.yO6qgr6HNPcTWBjM/6YUKVfxwKCMYiKU2",
+      "createdAt": "2026-08-30T13:01:47.835Z",
+      "updatedAt": "2026-08-30T13:01:47.835Z"
     }
   ],
   "productImages": [

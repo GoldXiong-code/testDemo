@@ -6,9 +6,14 @@ import { validateGeneratedHtml } from "@/lib/builder";
 import { saveGeneration } from "@/lib/projects";
 
 // 密钥只从环境变量读取（.env 文件，已在 .gitignore 中），禁止硬编码
-const API_KEY = process.env.DASHSCOPE_API_KEY || "";
-const BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1";
-const MODEL = "qwen3.8-max";
+// 文本/代码生成：DeepSeek 官方 API（OpenAI 兼容格式）
+const API_KEY = process.env.DEEPSEEK_API_KEY || "";
+const BASE_URL = "https://api.deepseek.com";
+const MODEL = "deepseek-v4-pro";
+// 图片生成：仍走阿里云通义万相（DashScope），单独用 DashScope 密钥
+const IMAGE_API_KEY = process.env.DASHSCOPE_API_KEY || "";
+// 真实商品图片：Pexels 免费图库 API（按商品名搜索真实照片，免费授权可商用）
+const PEXELS_API_KEY = process.env.PEXELS_API_KEY || "";
 
 // 统一的 LLM 请求：遇到 429/5xx 等瞬时错误自动重试一次，避免直接报错给用户
 async function llmFetch(body: Record<string, unknown>): Promise<Response> {
@@ -57,7 +62,6 @@ async function callLLMStreaming(
     max_tokens: options?.max_tokens ?? 4096,
     temperature: options?.temperature ?? 0.5,
     stream: true,
-    ...(options?.enableThinking === false ? { enable_thinking: false } : {}),
   });
 
   if (!res.body) return "";
@@ -698,7 +702,7 @@ async function generateImage(prompt: string): Promise<string | null> {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${IMAGE_API_KEY}`,
         "X-DashScope-Async": "enable",
       },
       body: JSON.stringify({
@@ -721,7 +725,7 @@ async function generateImage(prompt: string): Promise<string | null> {
     for (let i = 0; i < 30; i++) {
       await new Promise(r => setTimeout(r, 2000));
       const statusRes = await fetch(`https://dashscope.aliyuncs.com/api/v1/tasks/${taskId}`, {
-        headers: { Authorization: `Bearer ${API_KEY}` },
+        headers: { Authorization: `Bearer ${IMAGE_API_KEY}` },
       });
       const statusData = await statusRes.json();
       if (statusData.output?.task_status === "SUCCEEDED") {
@@ -912,16 +916,99 @@ function buildAuthRequirement(categoryKey: string): string {
 7. 刷新页面后登录状态必须保持（从 localStorage 读取）。`;
 }
 
+// 判断生成的页面是否真正实现了注册/登录功能（兼容中英文，避免 AI 用英文"Login/Sign in"时被误判为缺失）
+function hasAuthImplementation(html: string): boolean {
+  if (!html) return false;
+  const lower = html.toLowerCase();
+  const zhMarkers = ["登录", "注册", "退出登录", "个人中心", "atoms_users", "atoms_current_user"];
+  const enMarkers = ["login", "sign in", "signin", "sign-in", "register", "sign up", "signup", "sign-up", "sign out", "signout", "sign-out", "log out", "logout", "log-out"];
+  if (zhMarkers.some((m) => html.includes(m))) return true;
+  if (enMarkers.some((m) => lower.includes(m))) return true;
+  return false;
+}
+
+// 判断生成的 HTML 是否被截断（结尾缺少 </html>，通常是 max_tokens 上限被截断在中途导致白屏）
+function isTruncatedHtml(html: string): boolean {
+  const t = (html || "").trim();
+  if (!t) return true;
+  return !/<\/html>\s*$/i.test(t);
+}
+
+// 按商品名从 Pexels 免费图库搜索真实照片，返回图片 URL 列表（无 key 或出错时返回空数组，调用方降级为占位图）
+async function searchProductImages(query: string, count = 1): Promise<string[]> {
+  if (!PEXELS_API_KEY || !query) return [];
+  try {
+    const res = await fetch(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape`,
+      { headers: { Authorization: PEXELS_API_KEY } }
+    );
+    if (!res.ok) return [];
+    const data = (await res.json()) as any;
+    const photos: any[] = data.photos || [];
+    return photos.map((p) => p.src?.large || p.src?.medium || p.src?.original || "").filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+// 找出内联事件（onclick/onkeydown 等）调用了、但脚本里没定义的函数名（会导致按钮点击无反应）
+function findUndefinedHandlers(html: string): string[] {
+  if (!html) return [];
+  const calls = new Set<string>();
+  const callRe = /on(?:click|keydown|keyup|change|input|submit)\s*=\s*["']\s*([A-Za-z_$][\w$]*)\s*\(/gi;
+  let m;
+  while ((m = callRe.exec(html))) calls.add(m[1]);
+  const missing: string[] = [];
+  for (const name of calls) {
+    if (["event", "this", "if", "for", "return"].includes(name)) continue;
+    const defined = new RegExp(`(?:function\\s+${name}\\b|window\\.${name}\\b|\\b(?:var|let|const)\\s+${name}\\b|\\b${name}\\s*=)`).test(html);
+    if (!defined) missing.push(name);
+  }
+  return missing;
+}
+
+// 让 AI 为内联事件引用的缺失函数补充定义（点击无反应的最常见原因），返回补充后的 HTML；失败/无需修复时返回原 HTML
+async function repairUndefinedHandlers(html: string, push: (s: string) => void): Promise<string> {
+  const missing = findUndefinedHandlers(html);
+  if (missing.length === 0) return html;
+  console.warn(`[repair] 发现 ${missing.length} 个未定义函数（按钮会点不动），自动补充：`, missing);
+  try {
+    const res = await callLLMStreaming(
+      [
+        {
+          role: "system",
+          content: `下面这段 HTML 里有几个内联事件（onclick 等）调用的函数没有在脚本里定义，导致对应按钮点击无反应。请为下面列出的每个函数补上定义，输出一个完整的 <script>...</script> 片段（函数一律用 function 函数名(){} 写在 script 顶层，不要用 const/let），不要输出其他任何内容。\n\n需要补充定义的函数：${missing.join("、")}\n\n这些函数各自应实现的功能：\n- logoutUser：清除 localStorage 里的 atoms_current_user，把导航栏恢复到未登录状态（显示"登录/注册"按钮），收起用户下拉菜单。\n- toggleUserDropdown / closeUserDropdown：显示或隐藏用户头像下拉菜单。\n- openAuthModal / showAuthModal / openLogin：显示登录注册弹窗。\n- closeAuthModal / hideAuthModal / closeLogin：关闭登录注册弹窗。\n- switchAuthTab：切换登录/注册标签页。\n- 其余函数：根据页面上下文和函数名实现最合理的行为（跳转、显示提示、切换内容、回到顶部等），不要定义成空函数。`,
+        },
+        { role: "user", content: `现有页面代码（供你理解每个函数应该做什么）：\n${html.slice(0, 30000)}` },
+      ],
+      { max_tokens: 8192, temperature: 0.2, enableThinking: false },
+      push
+    );
+    const snippet = res.replace(/^```[\s\S]*?\n?/, "").replace(/\n?```\s*$/, "").trim();
+    if (snippet.includes("<script") && snippet.length > 100) {
+      let injected = html.replace(/<\/body>/i, `${snippet}\n</body>`);
+      if (injected === html) injected = html + "\n" + snippet;
+      console.log("[repair] 函数定义补充完成");
+      return injected;
+    }
+    console.warn("[repair] 补充输出异常，跳过");
+  } catch (e) {
+    console.error("[repair] 补充失败：", e);
+  }
+  return html;
+}
+
 export async function POST(request: Request) {
   // 密钥未配置时直接返回明确错误，绝不回退到硬编码
   if (!API_KEY) {
     const msg = (o: Record<string, unknown>) => `data: ${JSON.stringify(o)}\n\n`;
     return new Response(
-      msg({ type: "error", message: "服务端未配置 DASHSCOPE_API_KEY，请在 .env 文件中设置后重启" }) + msg({ type: "done" }),
+      msg({ type: "error", message: "服务端未配置 DEEPSEEK_API_KEY，请在 .env 文件中设置后重启" }) + msg({ type: "done" }),
       { headers: { "Content-Type": "text/event-stream" } }
     );
   }
   const { prompt, category, plan, style, detail, version, needsAuth, userId, clientId, projectId } = await request.json();
+  console.log(`[agent] 收到请求 category=${category} plan=${!!plan} needsAuth=${needsAuth} prompt=${(prompt || "").slice(0, 40)} detail=${(detail || "").slice(0, 40)}`);
 
   // 检测是否为增量开发（prompt 中包含"已有代码"）
   const isIncremental = prompt && prompt.includes("基于以下已有代码") && prompt.includes("已有代码：\n");
@@ -1139,7 +1226,7 @@ export async function POST(request: Request) {
                   content: `以下是现有代码，请按要求修改：\n\n${existingCode}`
                 }
               ],
-              { max_tokens: 16384, temperature: 0.3, enableThinking: false },
+              { max_tokens: 65536, temperature: 0.3, enableThinking: false },
               incLive.push
             );
           } catch (e) {
@@ -1150,7 +1237,62 @@ export async function POST(request: Request) {
           }
 
           const finalCode = extractHtml(modifiedCode);
-          const sanitized = sanitizeGeneratedHtml(finalCode);
+          let sanitized = sanitizeGeneratedHtml(finalCode);
+
+          // 修改结果被截断（缺 </html>）→ 让 AI 从截断处补全
+          if (isTruncatedHtml(sanitized)) {
+            console.warn("[incremental] 修改结果被截断（缺 </html>），自动补全…");
+            send({ type: "workflow_item", number: stepNum + 1, text: "检测到代码被截断，正在补全", done: false });
+            const contHeartbeat = setInterval(() => { send({ type: "heartbeat" }); }, 15000);
+            try {
+              const contRes = await callLLMStreaming(
+                [
+                  {
+                    role: "system",
+                    content: `下面是一段尚未写完就被截断的 HTML。请从它停止的位置接着写下去，把剩余部分补完，直到以 </html> 结束。只输出需要续写的内容，不要重复已写内容，不要输出 <!DOCTYPE> 等开头，不要输出解释文字或 markdown 代码块标记。`,
+                  },
+                  { role: "user", content: sanitized },
+                ],
+                { max_tokens: 32768, temperature: 0.2, enableThinking: false },
+                incLive.push
+              );
+              const cont = contRes.replace(/^```[\s\S]*?\n?/, "").replace(/\n?```\s*$/, "").trim();
+              const restarted = /<!DOCTYPE\s+html/i.test(cont) || /<html[\s>]/i.test(cont);
+              const candidate = restarted ? cont : sanitized + cont;
+              let completed = "";
+              try { completed = sanitizeGeneratedHtml(extractHtml(candidate)); } catch { /* ignore */ }
+              if (completed.length > 2000 && !isTruncatedHtml(completed)) {
+                sanitized = completed;
+                console.log(`[incremental] 截断补全完成（${sanitized.length} 字符）`);
+              } else {
+                console.warn("[incremental] 截断补全未成功，保留原代码");
+              }
+            } catch (e) {
+              console.error("[incremental] 截断补全失败：", e);
+            } finally {
+              incLive.flush();
+              clearInterval(contHeartbeat);
+            }
+            send({ type: "workflow_item", number: stepNum + 1, text: "检测到代码被截断，正在补全", done: true });
+          }
+
+          // 检测内联事件调用了但未定义的函数（退出登录等按钮点击无反应），自动补充定义
+          {
+            const missingFns = findUndefinedHandlers(sanitized);
+            if (missingFns.length > 0) {
+              console.warn(`[incremental] 发现 ${missingFns.length} 个未定义函数，自动补充：`, missingFns);
+              send({ type: "workflow_item", number: stepNum + 1, text: "检测到部分按钮无反应，正在修复", done: false });
+              const fnHeartbeat = setInterval(() => { send({ type: "heartbeat" }); }, 15000);
+              try {
+                const repaired = await repairUndefinedHandlers(sanitized, incLive.push);
+                if (repaired !== sanitized) sanitized = repaired;
+              } finally {
+                incLive.flush();
+                clearInterval(fnHeartbeat);
+              }
+              send({ type: "workflow_item", number: stepNum + 1, text: "检测到部分按钮无反应，正在修复", done: true });
+            }
+          }
 
           // 代码生成失败时直接报错，避免产出空项目
           if (!sanitized || sanitized.length < 2000) {
@@ -1254,6 +1396,7 @@ ${featureTitle}
 
         if (category && !plan) {
           // ===== 阶段 2a：生成开发计划（待办清单） =====
+          console.log(`[agent] 进入计划阶段 category=${category}`);
           const categoryKey = category === "custom" ? "tool" : category;
 
           const styleInfo = style ? `用户偏好的视觉风格：${style}。` : "";
@@ -1302,7 +1445,14 @@ ${featureTitle}
           // 计划阶段不发送 workflow_item（避免显示工作流程面板）
           // 只依靠前端的 "Alex 正在分析需求，制定开发计划..." workflow 消息
 
-          const planRes = await callLLM([
+          // 计划生成期间定时发心跳，防止长时间无数据导致浏览器/代理断开连接
+          const planHeartbeat = setInterval(() => {
+            try { send({ type: "heartbeat" }); } catch { /* 连接已断开，忽略 */ }
+          }, 10000);
+          const planStart = Date.now();
+          let planRes = "";
+          try {
+          planRes = await callLLM([
             {
               role: "system",
               content: `你是产品规划专家。根据用户的需求和应用类型，生成一份详细的业务功能开发计划。
@@ -1354,6 +1504,10 @@ ${categoryKey === "game"
             },
             { role: "user", content: `用户需求：${userMessage}${gameThemeNote}${toolThemeNote}${dashboardThemeNote}\n应用类型：${categoryKey}` },
           ], { max_tokens: 4096, temperature: 0.7 });
+          } finally {
+            clearInterval(planHeartbeat);
+            console.log(`[agent] 计划 LLM 返回，耗时 ${Date.now() - planStart}ms，长度 ${planRes.length}`);
+          }
 
           let planItems: { title: string; description: string; steps?: any[] }[] = [];
           try {
@@ -1613,17 +1767,44 @@ ${categoryKey === "game"
             const heartbeat = setInterval(() => {
               send({ type: "heartbeat" });
             }, 15000);
+
+            // 电商类：提取商品名并搜索 Pexels 真实图片，注入提示词让 AI 用真实商品图（不用 emoji/占位图）
+            let imageHint = "";
+            if (categoryKey === "ecommerce" && PEXELS_API_KEY) {
+              try {
+                const kwRes = await callLLM(
+                  [
+                    { role: "system", content: "你是商品信息提取助手。从用户需求中提取要在网站里展示的商品名称，返回一个 JSON 字符串数组（最多 8 个，用中文或常见英文名，如 iPhone、MacBook、AirPods）。只返回 JSON 数组，不要任何其他文字。" },
+                    { role: "user", content: `用户需求：${userMessage}\n\n开发计划：\n${planText}` },
+                  ],
+                  { max_tokens: 200, temperature: 0.2 }
+                );
+                const m = kwRes.match(/\[[\s\S]*\]/);
+                const keywords: string[] = m ? (JSON.parse(m[0]) as string[]) : [];
+                const map: Record<string, string> = {};
+                for (const kw of keywords.slice(0, 8)) {
+                  const urls = await searchProductImages(kw, 1);
+                  if (urls[0]) map[kw] = urls[0];
+                }
+                if (Object.keys(map).length) {
+                  imageHint = `\n\n【商品真实图片（必须使用，极其重要）】以下商品必须使用对应的真实图片 URL，直接放在 <img src="..."> 标签里，绝不要用 emoji、data URI 或占位图：\n${Object.entries(map).map(([k, v]) => `- ${k} → ${v}`).join("\n")}`;
+                  console.log(`[freeform] 已匹配 ${Object.keys(map).length} 张真实商品图片`);
+                }
+              } catch (e) {
+                console.warn("[freeform] 商品图片搜索失败：", e);
+              }
+            }
             try {
               // 用流式调用：长代码生成（8192 tokens）非流式会超过 HTTP 头超时
               freeRes = await callLLMStreaming(
                 [
                   {
                     role: "system",
-                    content: `${systemPrompt}${styleRule}${gameRequirement}${toolRequirement}${dashboardRequirement}\n\n【开发计划（必须逐一实现）】请实现以下全部功能模块（标注"用户取消了此功能"的跳过），功能要完整可用、设计精美：\n${planText}${authRequirement}`,
+                    content: `${systemPrompt}${styleRule}${gameRequirement}${toolRequirement}${dashboardRequirement}\n\n【开发计划（必须逐一实现）】请实现以下全部功能模块（标注"用户取消了此功能"的跳过），功能要完整可用、设计精美：\n${planText}${authRequirement}\n\n【代码质量硬性要求（极其重要，必须遵守）】\n1. 所有内联事件（onclick/onkeydown/onchange 等）调用的函数，必须用 function 函数名(){} 或 window.函数名 = function(){} 在 script 标签顶层定义成全局函数。绝不允许出现 onclick="xxx()" 却不定义 xxx，也绝不能用 const/let 定义这些供内联事件调用的函数（会导致点击无反应）。\n2. 设计必须美观精致：按钮、卡片、间距、配色都要好看，严格遵循用户指定的视觉风格（如苹果官网的黑白极简风）。同时代码保持精简高效：控制在 5 万字符左右，CSS 合理复用、不写冗余，不塞入计划之外的功能（如管理员后台、数据统计）。\n3. 必须输出从 <!DOCTYPE html> 到 </html> 的完整代码，以 </html> 结尾，绝不能中途截断。\n4. 内联事件里只能调用函数，不能写 if/for 等语句（例如 onkeydown="if(...)" 是无效的）。`,
                   },
-                  { role: "user", content: `用户需求：${userMessage}\n应用类型：${categoryKey}${needsAuth ? "\n\n【再次强调】用户勾选了需要注册登录，生成的页面必须包含完整的注册/登录弹窗和登录状态切换，缺少登录功能视为不合格。" : ""}${categoryKey === "game" ? "\n\n【再次强调】必须是真正可玩的游戏：有游戏循环、键盘/鼠标/触摸操作、计分和失败判定，点击开始就能玩；只做介绍页或静态展示页视为不合格。" : ""}${categoryKey === "tool" ? "\n\n【再次强调】必须是真正可用的工具：所有按钮、计算、计时、增删操作都有真实功能，数据能保存；只做介绍页或推广页视为不合格。" : ""}` },
+                  { role: "user", content: `用户需求：${userMessage}${imageHint}\n应用类型：${categoryKey}${needsAuth ? "\n\n【再次强调】用户勾选了需要注册登录，生成的页面必须包含完整的注册/登录弹窗和登录状态切换，缺少登录功能视为不合格。" : ""}${categoryKey === "game" ? "\n\n【再次强调】必须是真正可玩的游戏：有游戏循环、键盘/鼠标/触摸操作、计分和失败判定，点击开始就能玩；只做介绍页或静态展示页视为不合格。" : ""}${categoryKey === "tool" ? "\n\n【再次强调】必须是真正可用的工具：所有按钮、计算、计时、增删操作都有真实功能，数据能保存；只做介绍页或推广页视为不合格。" : ""}` },
                 ],
-                { max_tokens: 16384, temperature: 0.5, enableThinking: false },
+                { max_tokens: 32768, temperature: 0.5, enableThinking: false },
                 freeLive.push
               );
             } catch (e) {
@@ -1632,7 +1813,7 @@ ${categoryKey === "game"
               freeLive.flush();
               clearInterval(heartbeat);
             }
-            console.log(`[freeform] 生成 ${freeRes.length} 字符 | 含登录: ${freeRes.includes("登录")} | 结尾: ${JSON.stringify(freeRes.slice(-30))}`);
+            console.log(`[freeform] 生成 ${freeRes.length} 字符 | 含登录: ${hasAuthImplementation(freeRes)} | 结尾: ${JSON.stringify(freeRes.slice(-30))}`);
 
             let freeHtml = "";
             try { freeHtml = sanitizeGeneratedHtml(extractHtml(freeRes)); } catch { /* ignore */ }
@@ -1648,14 +1829,14 @@ ${categoryKey === "game"
                     [
                       {
                         role: "system",
-                        content: `${systemPrompt}\n\n【修复任务】下面这段页面代码运行时存在错误。请保持功能、布局、视觉设计完全不变，只修复列出的错误，然后输出修复后的完整 HTML（从 <!DOCTYPE html> 到 </html>，完整不省略，不要输出任何解释文字）。\n修复提示：如果错误是 "Cannot access 'xxx' before initialization" 或 "xxx is not defined"，通常是全局对象用了 const/let 声明、或构造函数里引用了尚未赋值的全局变量——改为先 var 声明、类定义完成后再赋值，并把依赖该全局变量的初始化逻辑移到实例化之后调用。`,
+                        content: `${systemPrompt}\n\n【修复任务】下面这段页面代码运行时存在错误。请保持功能、布局、视觉设计完全不变，只修复列出的错误，然后输出修复后的完整 HTML（从 <!DOCTYPE html> 到 </html>，完整不省略，不要输出任何解释文字）。\n修复提示：\n- 如果错误是「内联事件引用的全局变量 xxx 未定义」，说明 HTML 里写了 onclick="xxx()" 这类调用，但脚本里没有定义 xxx 函数。请在 script 标签顶层用 function xxx(){} 或 window.xxx = function(){} 补充定义这些函数（实现其应有的功能），这是点击无反应的最常见原因。\n- 如果错误是 "Cannot access 'xxx' before initialization" 或 "xxx is not defined"，通常是全局对象用了 const/let 声明、或构造函数里引用了尚未赋值的全局变量——改为先 var 声明、类定义完成后再赋值，并把依赖该全局变量的初始化逻辑移到实例化之后调用。\n- 如果错误是 "Unexpected end of input"，说明代码被截断，请补全到 </html> 结束。`,
                       },
                       {
                         role: "user",
                         content: `运行时发现的错误：\n${issues.map((s, i) => `${i + 1}. ${s}`).join("\n")}\n\n原始代码：\n${freeHtml}`,
                       },
                     ],
-                    { max_tokens: 16384, temperature: 0.2, enableThinking: false },
+                    { max_tokens: 32768, temperature: 0.2, enableThinking: false },
                     freeLive.push
                   );
                   let fixedHtml = "";
@@ -1679,6 +1860,100 @@ ${categoryKey === "game"
                 send({ type: "workflow_item", number: stepCounter, text: "冒烟验证代码，自动修复发现的问题", done: true });
               }
               fullCode = freeHtml;
+
+              // 生成结果被截断（结尾缺 </html>，通常是 token 上限截断在中途导致白屏）→ 让 AI 从截断处补全
+              if (isTruncatedHtml(fullCode)) {
+                console.warn("[freeform] 生成结果被截断（缺 </html>），自动补全…");
+                send({ type: "workflow_item", number: stepCounter, text: "检测到代码被截断，正在补全剩余部分", done: false });
+                const contHeartbeat = setInterval(() => { send({ type: "heartbeat" }); }, 15000);
+                try {
+                  const contRes = await callLLMStreaming(
+                    [
+                      {
+                        role: "system",
+                        content: `下面是一段尚未写完就被截断的 HTML（结尾不完整，可能停在某个 CSS 规则或标签写到一半）。请从它停止的位置接着写下去，把剩余部分补完，直到以 </html> 结束。\n\n严格要求：\n1. 只输出需要续写的内容，绝对不要重复已经写过的任何字符、标签或内容。\n2. 不要输出 <!DOCTYPE>、<html>、<head> 等已存在的开头。\n3. 不要输出任何解释文字或 markdown 代码块标记。\n4. 保持原有的视觉风格和结构，把页面主体、交互脚本等内容完整补上。`,
+                      },
+                      { role: "user", content: fullCode },
+                    ],
+                    { max_tokens: 16384, temperature: 0.2, enableThinking: false },
+                    freeLive.push
+                  );
+                  const cont = contRes.replace(/^```[\s\S]*?\n?/, "").replace(/\n?```\s*$/, "").trim();
+                  // 若 AI 从头重写了（含 <!DOCTYPE / <html>），直接取重写结果；否则拼接续写内容
+                  const restarted = /<!DOCTYPE\s+html/i.test(cont) || /<html[\s>]/i.test(cont);
+                  const candidate = restarted ? cont : fullCode + cont;
+                  let completed = "";
+                  try { completed = sanitizeGeneratedHtml(extractHtml(candidate)); } catch { /* ignore */ }
+                  if (completed.length > 2000 && !isTruncatedHtml(completed)) {
+                    fullCode = completed;
+                    console.log(`[freeform] 截断补全完成（${fullCode.length} 字符）`);
+                  } else {
+                    console.warn("[freeform] 截断补全未成功，保留原代码");
+                  }
+                } catch (e) {
+                  console.error("[freeform] 截断补全失败：", e);
+                } finally {
+                  freeLive.flush();
+                  clearInterval(contHeartbeat);
+                }
+                send({ type: "workflow_item", number: stepCounter, text: "检测到代码被截断，正在补全剩余部分", done: true });
+              }
+
+              // 勾选了注册登录，但生成结果里没有实现登录 → 让 AI 补上（保持原页面视觉风格不变）
+              if (needsAuth && !hasAuthImplementation(fullCode)) {
+                console.warn("[freeform] 生成结果缺少登录功能，自动补充…");
+                send({ type: "workflow_item", number: stepCounter, text: "检测到缺少登录功能，正在补充注册/登录", done: false });
+                const authHeartbeat = setInterval(() => { send({ type: "heartbeat" }); }, 15000);
+                try {
+                  const authFixRes = await callLLMStreaming(
+                    [
+                      {
+                        role: "system",
+                        content: `${systemPrompt}\n\n【补充登录任务（最高优先级）】下面这段页面代码缺少用户注册/登录功能。请在不改变现有布局、视觉风格、其他功能的前提下，加入完整可用的注册/登录/退出登录流程：\n1. 用 localStorage 模拟用户数据库（atoms_users 存注册用户，atoms_current_user 存当前登录用户）。\n2. 顶部导航未登录时显示"登录/注册"按钮；已登录时显示用户头像和用户名，点击可退出登录。\n3. 提供美观的登录/注册弹窗（登录/注册标签页切换、表单校验、错误提示）。\n4. 需要登录才能用的操作（如购物车结算、提交订单等）未登录触发时弹出登录弹窗。\n\n然后输出补充后的完整 HTML（从 <!DOCTYPE html> 到 </html>，完整不省略，不要输出任何解释文字）。`,
+                      },
+                      {
+                        role: "user",
+                        content: `现有页面代码：\n${fullCode}`,
+                      },
+                    ],
+                    { max_tokens: 32768, temperature: 0.2, enableThinking: false },
+                    freeLive.push
+                  );
+                  let authFixed = "";
+                  try { authFixed = sanitizeGeneratedHtml(extractHtml(authFixRes)); } catch { /* ignore */ }
+                  if (authFixed.length > 2000 && hasAuthImplementation(authFixed)) {
+                    fullCode = authFixed;
+                    console.log("[freeform] 登录功能补充完成");
+                  } else {
+                    console.log("[freeform] 补充后仍未检测到登录，保留原代码");
+                  }
+                } catch (e) {
+                  console.error("[freeform] 补充登录失败：", e);
+                } finally {
+                  freeLive.flush();
+                  clearInterval(authHeartbeat);
+                }
+                send({ type: "workflow_item", number: stepCounter, text: "检测到缺少登录功能，正在补充注册/登录", done: true });
+              }
+
+              // 检测内联事件调用了但未定义的函数（退出登录等按钮点击无反应），自动补充定义
+              {
+                const missingFns = findUndefinedHandlers(fullCode);
+                if (missingFns.length > 0) {
+                  console.warn(`[freeform] 发现 ${missingFns.length} 个未定义函数，自动补充：`, missingFns);
+                  send({ type: "workflow_item", number: stepCounter, text: "检测到部分按钮无反应，正在修复", done: false });
+                  const fnHeartbeat = setInterval(() => { send({ type: "heartbeat" }); }, 15000);
+                  try {
+                    const repaired = await repairUndefinedHandlers(fullCode, freeLive.push);
+                    if (repaired !== fullCode) fullCode = repaired;
+                  } finally {
+                    freeLive.flush();
+                    clearInterval(fnHeartbeat);
+                  }
+                  send({ type: "workflow_item", number: stepCounter, text: "检测到部分按钮无反应，正在修复", done: true });
+                }
+              }
+
               send({ type: "workflow_item", number: stepCounter, text: freeStepText, done: true });
             } else {
               send({ type: "workflow_item", number: stepCounter, text: `${freeStepText}（改用备选方案）`, done: true });
@@ -1889,6 +2164,7 @@ README.md 应包含以下部分：
           }
 
           send({ type: "readme", content: readmeRes || `# 项目\n\n## 简介\n${userMessage}\n\n## 功能\n${planText}` });
+          send({ type: "workflow_item", number: readmeStepNum, text: "生成项目说明文档 README.md", done: true });
 
           // 获取增量开发建议
           let suggestionsRes = "";
