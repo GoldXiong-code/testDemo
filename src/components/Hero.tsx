@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getCurrentUser } from "@/lib/store";
 import { ArrowRight, Sparkles } from "lucide-react";
 
@@ -32,7 +31,6 @@ const avatarColors = [
 ];
 
 export default function Hero() {
-  const router = useRouter();
   const [inputValue, setInputValue] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -42,18 +40,20 @@ export default function Hero() {
 
   const handleStart = () => {
     if (!isLoggedIn) {
-      router.push("/login");
+      window.location.href = "/login";
       return;
     }
-    // 通过 localStorage 传递待处理输入（prompt + fresh 信号），
-    // 不依赖 URL 查询参数，避免客户端导航时 window.location 时序问题导致 prompt 丢失。
+    // 通过 localStorage 传递待处理输入（prompt + fresh 信号）。
+    // 用 window.location.href 做整页跳转（GET /app），而不是 router.push 的客户端跳转：
+    // 客户端跳转会发 RSC 请求，该响应是流式（chunked），在国内网络下会被「连接被终断」，
+    // 导致浏览器「无法打开页面」；整页 GET /app 是静态渲染、带 Content-Length、非流式，不会被中断。
     try {
       localStorage.setItem(
         "atoms_pending",
         JSON.stringify({ prompt: inputValue.trim(), fresh: true })
       );
     } catch {}
-    router.push("/app");
+    window.location.href = "/app";
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

@@ -82,13 +82,13 @@ export default function Navbar() {
                       {currentUser.email}
                     </p>
                   </div>
-                  <Link
+                  <a
                     href="/app"
                     className="block px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                     onClick={() => setUserMenuOpen(false)}
                   >
                     AI 生成
-                  </Link>
+                  </a>
                   <button
                     type="button"
                     onClick={handleLogout}
