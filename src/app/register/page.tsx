@@ -132,9 +132,26 @@ export default function RegisterPage() {
           <p className="text-[var(--text-muted)] mb-8">注册你的 Atoms 账户，开始构建产品</p>
 
           {apiError && (
-            <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2 text-red-400 text-sm">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              {apiError}
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/60" onClick={() => setApiError("")} />
+              <div className="relative bg-[var(--card-bg)] border border-red-500/30 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                    <AlertCircle className="w-5 h-5 text-red-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold text-white">注册失败</h3>
+                    <p className="mt-1 text-sm text-[var(--text-muted)] leading-relaxed">{apiError}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setApiError("")}
+                  className="mt-5 w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition-colors"
+                >
+                  知道了
+                </button>
+              </div>
             </div>
           )}
 
