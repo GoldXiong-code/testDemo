@@ -1768,7 +1768,12 @@ function AppContent() {
               <textarea
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); } }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
                 placeholder={previewCode && previewCode.length > 100 ? "描述要修改的地方，例如：把按钮改成蓝色 / 修复点击没反应的问题..." : "请 Alex 构建一个 Web 应用..."}
                 rows={2}
                 className="flex-1 px-4 py-3 bg-[var(--input-bg)] border border-[var(--card-border)] rounded-xl text-white placeholder:text-[var(--text-muted)] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors resize-none text-sm"
