@@ -80,20 +80,29 @@ const WORKFLOW_STEPS = [
   { key: "done", label: "✅ 开发完成！你可以在右侧预览和编辑代码。" },
 ];
 
+// 读取首页跳转过来时写入的「待处理输入」（prompt + fresh 信号）。
+// 用 localStorage 而非 URL 查询参数传递，是因为：
+// 1. useSearchParams 会让页面在静态/ISR 渲染下触发 bailout，卡在「加载中...」；
+// 2. window.location 在客户端导航时是快照，拿不到最新 URL，导致 prompt 丢失。
+function readPending(): { prompt: string; fresh: boolean } {
+  if (typeof window === "undefined") return { prompt: "", fresh: false };
+  try {
+    const raw = localStorage.getItem("atoms_pending");
+    if (!raw) return { prompt: "", fresh: false };
+    const p = JSON.parse(raw);
+    return {
+      prompt: typeof p.prompt === "string" ? p.prompt : "",
+      fresh: p.fresh === true,
+    };
+  } catch {
+    return { prompt: "", fresh: false };
+  }
+}
+
 function AppContent() {
   const router = useRouter();
-  // 直接读 window.location 的查询参数，替代 useSearchParams。
-  // 原因：useSearchParams 会让页面在静态/ISR 渲染时触发 "bailout to client-side rendering"，
-  // 该 bailout 在客户端迟迟不 resolve，导致 /app 页面永远卡在「加载中...」。
-  // 改用 window.location 后，页面可完全静态渲染（响应带 Content-Length、不流式），
-  // 既避免「加载中」卡死，也避免流式响应在部分网络下被「连接被终断」。
-  const searchParams =
-    typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search)
-      : new URLSearchParams();
-
-  // 检查是否"从首页新进入"（URL 参数 fresh=1）
-  const isFreshStart = searchParams.get("fresh") === "1";
+  // 检查是否"从首页新进入"（fresh 信号），用于清空旧项目
+  const isFreshStart = readPending().fresh;
 
   // 从 localStorage 恢复项目状态
   const getStoredProject = () => {
@@ -186,15 +195,14 @@ function AppContent() {
     identityRef.current.userId = u.id;
     identityRef.current.clientId = getClientId();
 
-    const urlPrompt = searchParams.get("prompt");
-    const urlFresh = searchParams.get("fresh");
-    // 清理 URL 参数（去掉 fresh 和 prompt，保持干净的 /app 路径）
-    if (urlPrompt || urlFresh) {
-      router.replace("/app");
+    const pending = readPending();
+    // 消费掉待处理输入，避免刷新页面时重复发送
+    if (pending.prompt || pending.fresh) {
+      try { localStorage.removeItem("atoms_pending"); } catch {}
     }
-    if (urlPrompt && !triggeredRef.current) {
+    if (pending.prompt && !triggeredRef.current) {
       triggeredRef.current = true;
-      setTimeout(() => handleSend(urlPrompt), 300);
+      setTimeout(() => handleSend(pending.prompt), 300);
     }
   }, []);
 

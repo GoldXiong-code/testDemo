@@ -45,12 +45,15 @@ export default function Hero() {
       router.push("/login");
       return;
     }
-    // 统一跳转到 /app，由 /app 做意图识别和回答
-    if (inputValue.trim()) {
-      router.push(`/app?prompt=${encodeURIComponent(inputValue.trim())}&fresh=1`);
-    } else {
-      router.push("/app?fresh=1");
-    }
+    // 通过 localStorage 传递待处理输入（prompt + fresh 信号），
+    // 不依赖 URL 查询参数，避免客户端导航时 window.location 时序问题导致 prompt 丢失。
+    try {
+      localStorage.setItem(
+        "atoms_pending",
+        JSON.stringify({ prompt: inputValue.trim(), fresh: true })
+      );
+    } catch {}
+    router.push("/app");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
